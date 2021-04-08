@@ -1,3 +1,23 @@
+!   This is the example01 source file for
+!       https://github.com/LiuGangKingston/FORTRAN-CSV-TIKZ.git
+!            Version 1.0
+!   free for non-commercial use.
+!   Please send us emails for any problems/suggestions/comments.
+!   Please be advised that none of us accept any responsibility
+!   for any consequences arising out of the usage of this
+!   software, especially for damage.
+!   For usage, please refer to the README file.
+!   This code was written by
+!        Gang Liu (gl.cell@outlook)
+!                 (http://orcid.org/0000-0003-1575-9290)
+!          and
+!        Shiwei Huang (huang937@gmail.com)
+!   Copyright (c) 2021
+!  
+!   We only coded the area after 
+!      "Specific calculation to generate CSV files"
+!   from the "template.f90".
+!
 module someimportantdata
     implicit none
     real*8,  parameter :: pi=3.1415926d0
