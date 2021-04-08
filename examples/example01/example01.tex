@@ -1,10 +1,34 @@
+%   This is the only one tex file of example01 for
+%       https://github.com/LiuGangKingston/FORTRAN-CSV-TIKZ.git
+%            Version 1.0
+%   free for non-commercial use.
+%   Please send us emails for any problems/suggestions/comments.
+%   Please be advised that none of us accept any responsibility
+%   for any consequences arising out of the usage of this
+%   software, especially for damage.
+%   For usage, please refer to the README file.
+%   This code was written by
+%        Gang Liu (gl.cell@outlook)
+%                 (http://orcid.org/0000-0003-1575-9290)
+%          and
+%        Shiwei Huang (huang937@gmail.com)
+%   Copyright (c) 2021
+%
+%   This example is for drawing trajectories of laser beams striking 
+%   on point A of a spherical segment (made of glass with index of 
+%   refraction n=1.5) by using Tikz. The radius of the whole sphere 
+%   is r=8 cm, the distance from the striking point A to point B is 
+%   a=3 cm. The angle ABD is 90 degrees. The distance from center C 
+%   to the bottom side of the spherical segment is b=3 cm. The angle 
+%   CFD is also 90 degrees. For incident angles being 3, 13, 23, 33, 
+%   43, and 53 degrees respectively, for examples, the refracted, 
+%   then reflected, and further refracted beams are also drawn. All 
+%   computations are done with the FORTRAN language.
+%
 \documentclass[tikz,border=5mm]{standalone}
 %\documentclass{article}
 \usepackage{tikz,csvsimple}
 \usetikzlibrary{calc}
-
-
-%This example is for drawing trajectories of laser beams striking on point A of a spherical segment (made of glass with index of refraction n=1.5) by using Tikz. The radius of the whole sphere is r=8 cm, the distance from the striking point A to point B is a=3 cm. The angle ABD is 90 degrees. The distance from center C to the bottom side of the spherical segment is b=3 cm. The angle CFD is also 90 degrees. For incident angles being 3, 13, 23, 33, 43, and 53 degrees respectively, the deflected, then reflected, and further deflected beams are also drawn. All computations are done with the FORTRAN language.
 
 
 \begin{document}
@@ -96,3 +120,6 @@
 
 
 \end{document}
+
+
+
