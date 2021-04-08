@@ -9,7 +9,7 @@ It is absolutely a good idea to combine FORTRAN computing and Tikz drawing power
 
 Here we will use the "CSVSIMPLE" package. Since it supports the option "[head to column names]" in the command "\csvreader", the CSV files are better generated with all names for the data columns as the first line. As "CSVSIMPLE" documented, any pair of neighbor names must be separated by the comma symbol ",", no other character is permitted in the first line. Once it is generated properly, the command
 
-\csvreader[head to column names]{THE CSV FILE}{}{
+\csvreader[head to column names]{THE CSV FILE}  {}  {
 ... DRAWING ANYTHING HERE ...
 }
 
