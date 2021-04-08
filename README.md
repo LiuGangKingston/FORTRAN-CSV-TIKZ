@@ -5,4 +5,4 @@ To use FORTRAN computing and Tikz drawing powers together.
           and
      Shiwei Huang (huang937@gmail.com)
      
-It is absolutely a good idea to combine FORTRAN computing and Tikz drawing powers. 
+It is absolutely a good idea to combine FORTRAN computing and Tikz drawing powers. To do this, we may use FORTRAN to perform all key computations, then output all needed results into CSV files. Since Latex/Tikz can read CSV data files, it can draw figures accordingly. So CSV plays a key role in this scheme. Coding FORTRAN for generating CSV files should be done very very carefully. 
