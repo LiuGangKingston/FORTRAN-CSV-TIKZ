@@ -1,6 +1,6 @@
 !   This is the template source file for
 !       https://github.com/LiuGangKingston/FORTRAN-CSV-TIKZ.git
-!            Version 1.0
+!            Version 1.1
 !   free for non-commercial use.
 !   Please send us emails for any problems/suggestions/comments.
 !   Please be advised that none of us accept any responsibility
@@ -94,7 +94,76 @@ contains
        return
     end function picktypicalcolor
 
+
+    function integer_to_character(i,length)
+       implicit none
+       character*20 :: integer_to_character
+       integer :: i,length,j,k,l
+
+       length=0
+       integer_to_character=' '
+       if(i.lt.0) then
+          length=1
+          integer_to_character(1:1)='-'
+       end if
+
+       j=abs(i)
+       k=0
+       loop: do
+          k=k+1
+          j=j/10
+          if(j.eq.0) exit loop
+       end do loop
+       length=length+k
+
+       j=abs(i)
+       do l=1,k
+          integer_to_character(length+1-l:length+1-l)=char(mod(j,10)+48)
+          j=j/10
+       end do
+
+       return
+    end function integer_to_character
+
+
+    subroutine groupfileopenwithunits(filenameprefix,startingunit,totalfiles)
+       implicit none
+       character (len=*), intent(in) :: filenameprefix
+       integer, intent(in) ::  startingunit,totalfiles
+       integer :: i,j,k,l
+       do i = 1, totalfiles
+           open(startingunit+i-1, file = filenameprefix//&
+                         &trim(integer_to_character(i))//'.csv')
+       end do
+       return
+    end subroutine groupfileopenwithunits
+
+
+    subroutine groupfileclosewithunits(startingunit,totalfiles)
+       implicit none
+       integer, intent(in) ::  startingunit,totalfiles
+       integer :: i,j,k,l
+       do i = 1, totalfiles
+           close(startingunit+i-1)
+       end do
+       return
+    end subroutine groupfileclosewithunits
+
+
+    function totalsplitfileneeded(totalelements, filesize)
+       implicit none
+       integer  :: totalsplitfileneeded, totalelements, filesize
+       totalsplitfileneeded = 1
+       if(totalelements .gt. 0) then
+          totalsplitfileneeded = (totalelements - 1)/filesize + 1
+       end if
+       return
+    end function totalsplitfileneeded
+
+
 end module someimportantdata
+
+
 
 
 program secondstep
