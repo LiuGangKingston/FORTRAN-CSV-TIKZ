@@ -1,6 +1,6 @@
 !   This is the template source file for
 !       https://github.com/LiuGangKingston/FORTRAN-CSV-TIKZ.git
-!            Version 1.1
+!            Version 2.0
 !   free for non-commercial use.
 !   Please send us emails for any problems/suggestions/comments.
 !   Please be advised that none of us accept any responsibility
@@ -19,11 +19,13 @@
 !   "subroutine mycomputing()" at the end of this file.
 !
 !
-module someimportantdata
+module somebasicdataandroutines
     implicit none
     real*8,  parameter :: pi=3.1415926d0
     real*8,  parameter :: rad2deg = 180/pi
     real*8,  parameter :: deg2rad = pi/180
+    integer, parameter :: minimumstartingfileunit = 30
+    integer, parameter :: maximumfileunit = 100
     integer, parameter :: numberofcolors = 68
     integer, parameter :: lengthofcolors = 16
     character (len=lengthofcolors), parameter :: colors(numberofcolors) =  (/&
@@ -126,34 +128,22 @@ contains
     end function integer_to_character
 
 
-    subroutine groupfileopenwithunits(filenameprefix,startingunit,totalfiles)
-       implicit none
-       character (len=*), intent(in) :: filenameprefix
-       integer, intent(in) ::  startingunit,totalfiles
-       integer :: i,j,k,l
-       do i = 1, totalfiles
-           open(startingunit+i-1, file = filenameprefix//&
-                         &trim(integer_to_character(i))//'.csv')
-       end do
-       return
-    end subroutine groupfileopenwithunits
-
-
-    subroutine groupfileclosewithunits(startingunit,totalfiles)
-       implicit none
-       integer, intent(in) ::  startingunit,totalfiles
-       integer :: i,j,k,l
-       do i = 1, totalfiles
-           close(startingunit+i-1)
-       end do
-       return
-    end subroutine groupfileclosewithunits
-
-
     function totalsplitfileneeded(totalelements, filesize)
        implicit none
        integer  :: totalsplitfileneeded, totalelements, filesize
        totalsplitfileneeded = 1
+       if(totalelements .le. 0) then
+          print*, 'This is in the "function totalsplitfileneeded(totalelements, filesize)"'
+          print*, '        the value of "totalelements" is ', totalelements, ', not positive.'
+          print*, '        Not reasonable. Then stopped.'
+          stop
+       end if
+       if(filesize .le. 0) then
+          print*, 'This is in the "function totalsplitfileneeded(totalelements, filesize)"'
+          print*, '        the value of "filesize" is ', filesize, ', not positive.'
+          print*, '        Not reasonable. Then stopped.'
+          stop
+       end if
        if(totalelements .gt. 0) then
           totalsplitfileneeded = (totalelements - 1)/filesize + 1
        end if
@@ -161,7 +151,156 @@ contains
     end function totalsplitfileneeded
 
 
-end module someimportantdata
+    subroutine groupfileopenwithunits(filenameprefix,startingunit,totalfiles)
+       implicit none
+       character (len=*), intent(in) :: filenameprefix
+       integer, intent(in) ::  startingunit,totalfiles
+       integer :: i,j,k,l
+       logical :: ex
+       if(startingunit .lt. minimumstartingfileunit) then
+          print*, 'This is in the "groupfileopenwithunits(filenameprefix,startingunit,totalfiles)"'
+          print*, '        the value of "startingunit" is ', startingunit, ', being less than ', &
+                          & minimumstartingfileunit, ' .'
+          print*, '        This code does not support such. Then stopped.'
+          stop
+       end if
+       if(totalfiles .le. 0) then
+          print*, 'This is in the "groupfileopenwithunits(filenameprefix,startingunit,totalfiles)"'
+          print*, '        the value of "filesize" is ', totalfiles, ', not positive.'
+          print*, '        Not reasonable. Then stopped.'
+          stop
+       end if
+       if(startingunit + totalfiles .gt. maximumfileunit) then
+          print*, 'This is in the "groupfileopenwithunits(filenameprefix,startingunit,totalfiles)"'
+          print*, '        the value of "startingunit + totalfiles" is ', startingunit + totalfiles, &
+                 &',       greater than ', maximumfileunit, ' .'
+          print*, '        This code does not support such. Then stopped.'
+          stop
+       end if
+       do i = 1, totalfiles
+          j = startingunit + i - 1
+          inquire(j,opened=ex)
+          if(ex) then
+             print*, 'This is in the "groupfileopenwithunits(filenameprefix,startingunit,totalfiles)"'
+             print*, '        the unit number ', j, ' is being used now, which can not be used to open file:'
+             print*, '        '//filenameprefix//trim(integer_to_character(i,l))//'.csv'
+             print*, '        Then stopped.'
+             stop
+          else
+              open(j, file = filenameprefix//trim(integer_to_character(i,l))//'.csv')
+          end if
+       end do
+       return
+    end subroutine groupfileopenwithunits
+
+
+    function pickunit(startingunit, filesize, totalfiles, startingelement, element)
+       implicit none
+       integer  ::    startingunit, filesize, totalfiles, startingelement, element
+       integer  ::    pickunit, i, j, k
+       if(startingunit .lt. minimumstartingfileunit) then
+          print*, 'This is in the "pickunit(startingunit, filesize, totalfiles, startingelement, element)"'
+          print*, '        the value of "startingunit" is ', startingunit, ', being less than ', &
+                          & minimumstartingfileunit, ' .'
+          print*, '        This code does not support such. Then stopped.'
+          stop
+       end if
+       if(filesize .le. 0) then
+          print*, 'This is in the "pickunit(startingunit, filesize, totalfiles, startingelement, element)"'
+          print*, '        the value of "filesize" is ', filesize, ', not positive.'
+          print*, '        Not reasonable. Then stopped.'
+          stop
+       end if
+       if(totalfiles .le. 0) then
+          print*, 'This is in the "pickunit(startingunit, filesize, totalfiles, startingelement, element)"'
+          print*, '        the value of "filesize" is ', totalfiles, ', not positive.'
+          print*, '        Not reasonable. Then stopped.'
+          stop
+       end if
+       if(startingunit + totalfiles .gt. maximumfileunit) then
+          print*, 'This is in the "pickunit(startingunit, filesize, totalfiles, startingelement, element)"'
+          print*, '        the value of "startingunit + totalfiles" is ', startingunit + totalfiles, &
+                 &',       greater than ', maximumfileunit, ' .'
+          print*, '        This code does not support such. Then stopped.'
+          stop
+       end if
+       k = abs(element - startingelement) + 1
+       j = (k - 1) / filesize + 1
+       if(j .gt. totalfiles) then
+          print*, 'This is in the "pickunit(startingunit, filesize, totalfiles, startingelement, element)"'
+          print*, '        the new caculated file number is ', j, ' greater than the "totalfiles": ', totalfiles, ' .'
+          print*, '        This should not happen. Then stopped.'
+          stop
+       end if
+       pickunit = startingunit + j - 1
+       return
+    end function pickunit
+
+
+    subroutine firstlinetogroupfiles(startingunit,totalfiles,firstlinewords)
+       implicit none
+       character (len=*), intent(in) :: firstlinewords
+       integer, intent(in) ::  startingunit,totalfiles
+       integer :: i,j,k,l
+       if(startingunit .lt. minimumstartingfileunit) then
+          print*, 'This is in the "firstlinetogroupfiles(startingunit,totalfiles,firstlinewords)"'
+          print*, '        the value of "startingunit" is ', startingunit, ', being less than ', &
+                          & minimumstartingfileunit, ' .'
+          print*, '        This code does not support such. Then stopped.'
+          stop
+       end if
+       if(totalfiles .le. 0) then
+          print*, 'This is in the "firstlinetogroupfiles(startingunit,totalfiles,firstlinewords)"'
+          print*, '        the value of "filesize" is ', totalfiles, ', not positive.'
+          print*, '        Not reasonable. Then stopped.'
+          stop
+       end if
+       if(startingunit + totalfiles .gt. maximumfileunit) then
+          print*, 'This is in the "firstlinetogroupfiles(startingunit,totalfiles,firstlinewords)"'
+          print*, '        the value of "startingunit + totalfiles" is ', startingunit + totalfiles, &
+                 &',       greater than ', maximumfileunit, ' .'
+          print*, '        This code does not support such. Then stopped.'
+          stop
+       end if
+       do i = 1, totalfiles
+           write(startingunit+i-1, '(a)') trim(firstlinewords)
+       end do
+       return
+    end subroutine firstlinetogroupfiles
+
+
+    subroutine groupfileclosewithunits(startingunit,totalfiles)
+       implicit none
+       integer, intent(in) ::  startingunit,totalfiles
+       integer :: i,j,k,l
+       if(startingunit .lt. minimumstartingfileunit) then
+          print*, 'This is in the "groupfileclosewithunits(startingunit,totalfiles)"'
+          print*, '        the value of "startingunit" is ', startingunit, ', being less than ', &
+                          & minimumstartingfileunit, ' .'
+          print*, '        This code does not support such. Then stopped.'
+          stop
+       end if
+       if(totalfiles .le. 0) then
+          print*, 'This is in the "groupfileclosewithunits(startingunit,totalfiles)"'
+          print*, '        the value of "filesize" is ', totalfiles, ', not positive.'
+          print*, '        Not reasonable. Then stopped.'
+          stop
+       end if
+       if(startingunit + totalfiles .gt. maximumfileunit) then
+          print*, 'This is in the "groupfileclosewithunits(startingunit,totalfiles)"'
+          print*, '        the value of "startingunit + totalfiles" is ', startingunit + totalfiles, &
+                 &',       greater than ', maximumfileunit, ' .'
+          print*, '        This code does not support such. Then stopped.'
+          stop
+       end if
+       do i = 1, totalfiles
+           close(startingunit+i-1)
+       end do
+       return
+    end subroutine groupfileclosewithunits
+
+
+end module somebasicdataandroutines
 
 
 
@@ -176,34 +315,44 @@ end program secondstep
 
 
 subroutine mycomputing()
-    use someimportantdata
+    use somebasicdataandroutines
     implicit double precision (a-z)
 
 ! Specific calculation to generate CSV files
 ! Specific calculation to generate CSV files
 
-    integer :: i, totallines
+    !integer :: i, j, k, u, totallines, startingunitforsplitfiles, datalinesineachfile, totalfiles
 
-    open(31, file='setup.scalars.csv')
-    open(32, file='iterated.alldata.csv')
+    !totallines = 500
+    !datalinesineachfile = 50
+    !startingunitforsplitfiles = 30
+    !totalfiles = totalsplitfileneeded(totallines, datalinesineachfile)
+
+    !open(21, file='setup.scalars.csv')
+    !write(21,"(a)")'totallines,refractiveindex,bigradius,a,b,z,anglez,c,anglea'
+    !write(21,"(1x,i10,',',7(f20.8, ','),e20.8)") totallines,refractiveindex,bigradius,a,b,z,anglez,c,anglea
+    !close(21)
+
+    !call groupfileopenwithunits('iterated.alldata.',startingunitforsplitfiles,totalfiles)
+    !call firstlinetogroupfiles(startingunitforsplitfiles,totalfiles,'totallines,i,refractiveindex,bigradius,'//&
+    !                                          &'a,b,z,anglez,c,anglea,incidentangle,refractiveangle,anglede,'//&
+    !                                          &'dx,ee,et,ex,ey,anglece,angleced,outangle,mycolor')
+    !do i = 1, totallines
 
 
-    !write(31,"(a)")'totallines,refractiveindex,bigradius,a,b,z,anglez,c,anglea'
-    !write(31,"(1x,i10,',',7(f20.8, ','),e20.8)") totallines,refractiveindex,bigradius,a,b,z,anglez,c,anglea
 
-    !write(32,"(a)")'totallines,i,refractiveindex,bigradius,a,b,z,anglez,c,anglea,incidentangle,'//&
-    !              &'refractiveangle,anglede,dx,ee,et,ex,ey,anglece,angleced,outangle,mycolor'
-    do i = 1, totallines
-       !write(32,"(1x,2(i10,','),19(f20.8, ','),a)") &
+
+
+
+
+       !u = pickunit(startingunitforsplitfiles, datalinesineachfile, totalfiles, 1, i)
+       !write(u,"(1x,2(i10,','),19(f20.8, ','),a)") &
        !        &totallines,i,refractiveindex,bigradius,a,b,z,anglez,c,anglea,incidentangle, &
-       !        &refractiveangle,anglede,dx,ee,et,ex,ey,anglece,angleced,outangle,picktypicalcolor(i)
+       !        &refractiveangle,anglede,dx,ee,et,ex,ey,anglece,angleced,outangle,picktikzcolor(i)
 
-    end do
+    !end do
 
-
-    close(31)
-    close(32)
-
+    !call groupfileclosewithunits(startingunitforsplitfiles,totalfiles)
 
     return
 end subroutine mycomputing
