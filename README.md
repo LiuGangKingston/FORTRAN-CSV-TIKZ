@@ -26,3 +26,5 @@ The first will contain data computed only one-time for figure setup. The second 
 }
 are outputted to the "iterated.alldata.csv" file, INCLUDING THOSE WHICH WERE ALREADY OUTPUTTED INTO THE FILE "setup.scalars.csv" . 
 
+In version 2.0, more routines are added to the module, which is also renamed. The new routines make splitting huge data into a group of CSV files easy.
+
