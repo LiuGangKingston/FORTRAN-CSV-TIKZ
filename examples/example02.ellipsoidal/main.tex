@@ -1,0 +1,37 @@
+% Lights from the left focus, reflected by the ellipsoidal, should pass the right focus.
+\documentclass[tikz,border=5mm]{standalone}
+%\documentclass{article}
+\usepackage{tikz,csvsimple}
+\usetikzlibrary{calc}
+
+\begin{document}
+
+\begin{tikzpicture}
+
+\coordinate (circlecenter) at (0,0);
+\draw[red,fill=red] (circlecenter) circle (2pt);
+
+\csvreader[head to column names]{setup.scalars.csv}{}
+{\coordinate (bbb) at (\startinxofsoidal, \startinyofsoidal);
+\draw [blue, line width=0mm] ($(bbb)+(circlecenter)$) arc (\startingangleofsoidal:\endinggangleofsoidal:\a cm and \b cm);
+%\draw [green, dashed, line width=0mm] (circlecenter) ellipse (\a cm and \b cm);
+\fill [blue]   (\c, 0) circle (2pt);
+\fill [green]  (-\c, 0) circle (2pt);
+\pgfmathsetmacro{\borderx}{\a+2}
+\pgfmathsetmacro{\bordery}{\b+1}
+}
+
+\begin{scope}
+\clip (-\borderx,-\bordery) rectangle  (\borderx,\bordery) ;
+
+\csvreader[head to column names]{iterated.alldata.1.csv}{}
+{\coordinate (interpoint) at (\x,\y);
+\draw[green, line width = 0mm]  (\c,0) -- (interpoint);
+\draw[red,   line width = 0mm]  (interpoint) -- + (\reflectangle:60cm);
+}
+\end{scope}
+
+\end{tikzpicture}
+
+\end{document}
+
