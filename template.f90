@@ -68,8 +68,7 @@ contains
        implicit none
        integer  :: i, k
        character (len=lengthofcolors) :: pickcolor
-       k = mod(i-1, numberofcolors) + 1
-       if(k .le. 0) k = 1
+       k = abs(mod(i-1, numberofcolors)) + 1
        pickcolor = colors(k)
        return
     end function pickcolor
@@ -79,8 +78,7 @@ contains
        implicit none
        integer  :: i, k
        character (len=lengthoftikzcolors) :: picktikzcolor
-       k = mod(i-1, numberoftikzcolors) + 1
-       if(k .le. 0) k = 1
+       k = abs(mod(i-1, numberoftikzcolors)) + 1
        picktikzcolor = tikzcolors(k)
        return
     end function picktikzcolor
@@ -90,8 +88,7 @@ contains
        implicit none
        integer  :: i, k
        character (len=lengthoftypicalcolors) :: picktypicalcolor
-       k = mod(i-1, numberoftypicalcolors) + 1
-       if(k .le. 0) k = 1
+       k = abs(mod(i-1, numberoftypicalcolors)) + 1
        picktypicalcolor = typicalcolors(k)
        return
     end function picktypicalcolor
@@ -316,12 +313,14 @@ end program secondstep
 
 subroutine mycomputing()
     use somebasicdataandroutines
-    implicit double precision (a-z)
+    implicit none
 
 ! Specific calculation to generate CSV files
 ! Specific calculation to generate CSV files
 
     !integer :: i, j, k, u, totallines, startingunitforsplitfiles, datalinesineachfile, totalfiles
+    !double precision :: refractiveindex,bigradius,a,b,z,anglez,c,anglea,incidentangle, &
+    !                   &refractiveangle,anglede,dx,ee,et,ex,ey,anglece,angleced,outangle
 
     !totallines = 500
     !datalinesineachfile = 50
