@@ -318,25 +318,25 @@ subroutine mycomputing()
 ! Specific calculation to generate CSV files
 ! Specific calculation to generate CSV files
 
-    !integer :: i, j, k, u, totallines, startingunitforsplitfiles, datalinesineachfile, totalfiles
-    !double precision :: refractiveindex,bigradius,a,b,z,anglez,c,anglea,incidentangle, &
-    !                   &refractiveangle,anglede,dx,ee,et,ex,ey,anglece,angleced,outangle
-
+    !integer :: i, j, k, u, totallines, startingunitforsplitfiles, datalinesineachfile, totalfiles, startingline
+    !double precision :: manydoubleprecisionvariables
+    
     !totallines = 500
+    !startingline = 1
     !datalinesineachfile = 50
     !startingunitforsplitfiles = 30
     !totalfiles = totalsplitfileneeded(totallines, datalinesineachfile)
 
     !open(21, file='setup.scalars.csv')
-    !write(21,"(a)")'totallines,refractiveindex,bigradius,a,b,z,anglez,c,anglea'
-    !write(21,"(1x,i10,',',7(f20.8, ','),e20.8)") totallines,refractiveindex,bigradius,a,b,z,anglez,c,anglea
+    !write(21,"(a)")'correspondingvariablenamesseparatedbycommaswithoutanyotherletters'
+    !write(21,"(1x,i10,',',7(f20.8, ','),e20.8)") thevariables
     !close(21)
 
     !call groupfileopenwithunits('iterated.alldata.',startingunitforsplitfiles,totalfiles)
-    !call firstlinetogroupfiles(startingunitforsplitfiles,totalfiles,'totallines,i,refractiveindex,bigradius,'//&
-    !                                          &'a,b,z,anglez,c,anglea,incidentangle,refractiveangle,anglede,'//&
-    !                                          &'dx,ee,et,ex,ey,anglece,angleced,outangle,mycolor')
-    !do i = 1, totallines
+    !call firstlinetogroupfiles(startingunitforsplitfiles,totalfiles,'correspondingvariablenamesseparatedbycommas'//&
+    !                                                                                      &'withoutanyotherletters')
+    !
+    !do i = startingline, totallines
 
 
 
@@ -344,10 +344,9 @@ subroutine mycomputing()
 
 
 
-       !u = pickunit(startingunitforsplitfiles, datalinesineachfile, totalfiles, 1, i)
-       !write(u,"(1x,2(i10,','),19(f20.8, ','),a)") &
-       !        &totallines,i,refractiveindex,bigradius,a,b,z,anglez,c,anglea,incidentangle, &
-       !        &refractiveangle,anglede,dx,ee,et,ex,ey,anglece,angleced,outangle,picktikzcolor(i)
+
+       !u = pickunit(startingunitforsplitfiles, datalinesineachfile, totalfiles, startingline, i)
+       !write(u,"(1x,2(i10,','),19(f20.8, ','),a)") thevariables, picktikzcolor(i)
 
     !end do
 
@@ -355,6 +354,7 @@ subroutine mycomputing()
 
     return
 end subroutine mycomputing
+
 
 
 
