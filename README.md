@@ -13,7 +13,7 @@ Here we will use the "CSVSIMPLE" package. Since it supports the option "[head to
 ... DRAW ANYTHING HERE ...
 }
 
-in a tex file can read it, and automatically get macros in form of "\COLUMNNAME" for all comlumn data. Another caution is to avoid "," at the end of any line of the data file. In fact, the above command invokes an iteration: to apply data of each line to perform the corresponding work of "{... DRAW ANYTHING HERE ...}". This will be done for all lines of the CSV file. 
+in a tex file can read it, and automatically get macros in form of "\COLUMNNAME" for all comlumn data. Another caution is to avoid "," at the end of any line of the data file. In fact, the above command also invokes an iteration: to apply data line by line to perform the corresponding work of "{... DRAW ANYTHING HERE ...}". 
 
 As in our example01, two CSV files will be generated: 
 
