@@ -333,8 +333,8 @@ subroutine mycomputing()
     !close(21)
 
     !call groupfileopenwithunits('iterated.alldata.',startingunitforsplitfiles,totalfiles)
-    !call firstlinetogroupfiles(startingunitforsplitfiles,totalfiles,'correspondingvariablenamesseparatedbycommas'//&
-    !                                                                                      &'withoutanyotherletters')
+    !call firstlinetogroupfiles(startingunitforsplitfiles,totalfiles,'correspondingvariablenamesseparatedby'//&
+    !                                                                             &'commaswithoutanyingelse')
     !
     !do i = startingline, totallines
 
