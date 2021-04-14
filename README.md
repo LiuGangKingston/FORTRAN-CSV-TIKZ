@@ -37,7 +37,7 @@ In version 2.0, more routines are added to the module, which is also renamed. Th
     totalfiles = totalsplitfileneeded(totallines, datalinesineachfile)
     call groupfileopenwithunits('iterated.alldata.',startingunitforsplitfiles,totalfiles)
     call firstlinetogroupfiles(startingunitforsplitfiles,totalfiles,//&
-                               'correspondingvariablenamesseparatedbycommaswithoutanyotherletters')
+                               'correspondingvariablenamesseparatedbycommaswithoutanythingelse')
     do i = startingline, totallines
        ...
        u = pickunit(startingunitforsplitfiles, datalinesineachfile, totalfiles, startingline, i)
