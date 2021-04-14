@@ -1,0 +1,125 @@
+%   This is the only one tex file of example01 for
+%       https://github.com/LiuGangKingston/FORTRAN-CSV-TIKZ.git
+%            Version 1.0
+%   free for non-commercial use.
+%   Please send us emails for any problems/suggestions/comments.
+%   Please be advised that none of us accept any responsibility
+%   for any consequences arising out of the usage of this
+%   software, especially for damage.
+%   For usage, please refer to the README file.
+%   This code was written by
+%        Gang Liu (gl.cell@outlook)
+%                 (http://orcid.org/0000-0003-1575-9290)
+%          and
+%        Shiwei Huang (huang937@gmail.com)
+%   Copyright (c) 2021
+%
+%   This example is for drawing trajectories of laser beams striking 
+%   on point A of a spherical segment (made of glass with index of 
+%   refraction n=1.5) by using Tikz. The radius of the whole sphere 
+%   is r=8 cm, the distance from the striking point A to point B is 
+%   a=3 cm. The angle ABD is 90 degrees. The distance from center C 
+%   to the bottom side of the spherical segment is b=3 cm. The angle 
+%   CFD is also 90 degrees. For incident angles being 3, 13, 23, 33, 
+%   43, and 53 degrees respectively, for examples, the refracted, 
+%   then reflected, and further refracted beams are also drawn. All 
+%   computations are done with the FORTRAN language.
+%
+\documentclass[tikz,border=5mm]{standalone}
+%\documentclass{article}
+\usepackage{tikz,csvsimple}
+\usetikzlibrary{calc}
+
+
+\begin{document}
+
+\begin{tikzpicture}
+
+% Initial data and setup
+
+\coordinate (circlecenter) at (0,0);
+
+% To setup/initialize 
+\csvreader[head to column names]{setup.scalars.csv}{}
+{
+% A few more parameters for graph drawing
+\pgfmathsetmacro{\ra}{\bigradius*0.7}
+\pgfmathsetmacro{\rs}{\bigradius+\ra}
+\pgfmathsetmacro{\rj}{\bigradius*0.1}
+\pgfmathsetmacro{\rk}{\bigradius*0.15}
+\pgfmathsetmacro{\rjj}{\bigradius*(0.15)}
+\pgfmathsetmacro{\rkk}{\rjj+0.18}
+
+% The half circle:
+\draw [dashed, line width=0mm] ($(0:\bigradius)+(circlecenter)$) arc [start angle=0, end angle=180, radius=\bigradius] -- cycle;
+% The circle center:
+\node at ($(circlecenter) + (-0.4,0)$) [above left]  {\textbf{C}} ;
+
+% The glass matetial:
+\coordinate (pz) at (\z,\b);
+\draw [very thick, fill=blue!20] ($(pz)+(circlecenter)$) arc [start angle=\anglez, end angle=180-\anglez, radius=\bigradius] -- cycle;
+\node at (-2,6.2) {Refractive index = \refractiveindex} ;
+
+% The incident point A
+\coordinate (positiona) at (\c, \a+\b);
+\draw [dashed] (circlecenter) -- + (\anglea:\rs);
+\node at ($ (positiona) + (0,0.5) $) {\textbf{A}};
+
+% Lines a and b
+\draw [dashed] (positiona) -- node [right] {a} + (0,-\b) node [below] {\textbf{B}};
+\draw [dashed] (circlecenter) -- node [right] {b} + (0,\b) node [below left] {\textbf{F}};
+}
+
+
+% To find E position by solving equations, with t as DE length: 
+%  (t sin + \b)^2 + (t cos + \dx )^2 = 64
+%  t^2 + 2 (\b sin + \dx cos ) + (\b sin + \dx cos )^2 
+%  = 64 - \b^2 - \dx^2 + (\b sin +  \dx cos  )^2 
+%  t = sqrt ((\b sin + \dx cos )^2 +  64 - \b^2 - \dx^2 )  - (\b sin + \dx cos ) 
+
+\csvreader[head to column names]{iterated.alldata.csv}{}
+{
+% Point A area
+\draw [\mycolor,line width=0mm, <-] (positiona) -- + (\anglea+\incidentangle:\ra); 
+
+
+% Point D area
+\coordinate (positiond) at (\dx,\b);
+\draw [\mycolor, line width=0mm] (positiona) -- (positiond); 
+
+% Point E area
+\coordinate (positione) at (\ex, \ey);
+\draw [\mycolor, line width=0mm, ->] (positiond) -- (positione); 
+\draw [\mycolor, line width=0mm, ->] (positione) -- + (\anglece-\outangle:\ra); 
+
+
+
+\pgfmathparse{(\totallines < 11) ? int(1) : int(0)}
+\ifnum\pgfmathresult=1 
+        \pgfmathsetmacro{\rjj}{\bigradius*(0.05+0.06*\i)}
+        \pgfmathsetmacro{\rkk}{\rjj+0.18}
+
+        \draw [line width=0mm] ($ (positiona) + (\anglea:\rjj) $) arc  [start angle=\anglea, delta angle=\incidentangle, radius=\rjj] ;
+        \node at ($ (positiona) + (\incidentangle*0.5+\anglea:\rkk) $) {$\theta_1$};
+
+        \draw [dashed] (positiond) -- + (0,.4);
+        \node at  (positiond) [below]  {\textbf{D}};
+
+        \draw [dashed] (circlecenter) -- + (\anglece:\rs);
+        \draw [line width=0mm] ($ (positione) + (\anglece:\rj) $) arc  [start angle=\anglece, delta angle=-\outangle, radius=\rj] ;
+        \node at ($ (positione) + (-\outangle*0.5+\anglece:\rk) $) {$\theta_4$};
+        \node at (positione) [above] {\textbf{E}};
+        \node at (0,-1 -\i*0.6 ) {Beam \  \i \ of \totallines : incident angle $\theta_1=\incidentangle$, out angle  $\theta_4=\outangle$};
+\fi
+
+
+}
+
+
+\end{tikzpicture}
+
+
+\end{document}
+
+
+
