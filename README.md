@@ -26,5 +26,25 @@ The first will contain data computed only one-time for figure setup. The second 
 }
 are outputted to the "iterated.alldata.csv" file, INCLUDING THOSE WHICH WERE EVEN ALREADY OUTPUT INTO PREVIOUS CSV FILES. 
 
-In version 2.0, more routines are added to the module, which is also renamed. The new routines make it easy to split a large amount of data to be output into a group of CSV files.
+In version 2.0, more routines are added to the module, which is also renamed. The new routines make it easy to split a large amount of data to be output into a group of CSV files. Hope this may be helpful to reduce hardware memory requirement in processing tex files. As an example, it can be done as:
+
+    integer :: i, u, totallines, startingunitforsplitfiles, datalinesineachfile, totalfiles, startingline
+    ...
+    totallines = 500
+    startingline = 1
+    datalinesineachfile = 50
+    startingunitforsplitfiles = 30
+    totalfiles = totalsplitfileneeded(totallines, datalinesineachfile)
+    call groupfileopenwithunits('iterated.alldata.',startingunitforsplitfiles,totalfiles)
+    call firstlinetogroupfiles(startingunitforsplitfiles,totalfiles,//&
+                               'correspondingvariablenamesseparatedbycommaswithoutanyotherletters')
+    do i = startingline, totallines
+       ...
+       u = pickunit(startingunitforsplitfiles, datalinesineachfile, totalfiles, startingline, i)
+       write(u,"(1x,2(i10,','),19(f20.8, ','),a)") thevariables, picktikzcolor(i)
+    end do
+    call groupfileclosewithunits(startingunitforsplitfiles,totalfiles)
+
+It is used in example01.500beams.data.split and example02.ellipsoidal. 
+
 
