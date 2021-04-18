@@ -1,6 +1,6 @@
 !   This is example01.500beams.data.split source file for
 !       https://github.com/LiuGangKingston/FORTRAN-CSV-TIKZ.git
-!            Version 2.0
+!            Version 2.1
 !   free for non-commercial use.
 !   Please send us emails for any problems/suggestions/comments.
 !   Please be advised that none of us accept any responsibility
@@ -20,13 +20,42 @@
 !
 !
 !
-module somebasicdataandroutines
+module fortrancsvtikzbasics
     implicit none
-    real*8,  parameter :: pi=3.1415926d0
+    real*8,  parameter :: pi = 3.14159265358979323846d0
     real*8,  parameter :: rad2deg = 180/pi
     real*8,  parameter :: deg2rad = pi/180
-    integer, parameter :: minimumstartingfileunit = 30
-    integer, parameter :: maximumfileunit = 100
+    real*8,  parameter :: napierconstant = 2.71828182845904523536d0
+    real*8,  parameter :: eulernumber = napierconstant
+
+    real*8,  parameter :: accelerationduetoearthgravity = 9.80D0           !"m/s$^2$"
+    real*8,  parameter :: avogadronumber                = 6.0221367D23     !"mol$^{-1}$"
+    real*8,  parameter :: boltzmannconstant             = 1.380658D-23     !"J/K"
+    real*8,  parameter :: coulombconstant               = 8.99D9           !"N$\cdot $m$^2$/C$^2$"
+    real*8,  parameter :: electronchargemagnitiude      = 1.60217733D-19   !"C"
+    real*8,  parameter :: permeabilityoffreespace       = 1.25663706D-6    !"T$\cdot $m/A"
+    real*8,  parameter :: permittivityoffreespace       = 8.854187817D-12  !"C$^2$/(N$\cdot $m$^2$)"
+    real*8,  parameter :: planckconstant                = 6.6260755D-34    !"J$\cdot $s"
+    real*8,  parameter :: massofelectron                = 9.1093897D-31    !"kg"
+    real*8,  parameter :: massofneutron                 = 1.6749286D-27    !"kg"
+    real*8,  parameter :: massofproton                  = 1.6726231D-27    !"kg"
+    real*8,  parameter :: speedoflightinvacuum          = 2.99792458D+8    !"m/s"
+    real*8,  parameter :: universalgravitationalconst   = 6.67259D-11      !"N$\cdot $m$^2$/kg$^2$"
+    real*8,  parameter :: universalgasconstant          = 8.314510D0       !"J/(mol$\cdot $K)"
+
+    integer, parameter :: numberoftikzcolors = 19
+    integer, parameter :: lengthoftikzcolors = 16
+    character (len=lengthoftikzcolors), parameter :: tikzcolors(numberoftikzcolors) =  (/&
+              &'red             ','purple          ','magenta         ','pink            ', &
+              &'violet          ','white           ','orange          ','yellow          ', &
+              &'green           ','lime            ','brown           ','olive           ', &
+              &'blue            ','cyan            ','teal            ','lightgray       ', &
+              &'gray            ','darkgray        ','black           ' /)
+    integer, parameter :: numberoftypicalcolors = 5
+    integer, parameter :: lengthoftypicalcolors = 16
+    character (len=lengthoftypicalcolors), parameter :: typicalcolors(numberoftypicalcolors) = (/&
+              &'red             ','orange          ','yellow          ','green           ', &
+              &'blue            ' /)
     integer, parameter :: numberofcolors = 68
     integer, parameter :: lengthofcolors = 16
     character (len=lengthofcolors), parameter :: colors(numberofcolors) =  (/&
@@ -47,19 +76,7 @@ module somebasicdataandroutines
               &'SpringGreen     ','Tan             ','TealBlue        ','Thistle         ', &
               &'Turquoise       ','Violet          ','VioletRed       ','White           ', &
               &'WildStrawberry  ','Yellow          ','YellowGreen     ','YellowOrange    ' /)
-    integer, parameter :: numberoftikzcolors = 19
-    integer, parameter :: lengthoftikzcolors = 16
-    character (len=lengthoftikzcolors), parameter :: tikzcolors(numberoftikzcolors) =  (/&
-              &'red             ','purple          ','magenta         ','pink            ', &
-              &'violet          ','white           ','orange          ','yellow          ', &
-              &'green           ','lime            ','brown           ','olive           ', &
-              &'blue            ','cyan            ','teal            ','lightgray       ', &
-              &'gray            ','darkgray        ','black           ' /)
-    integer, parameter :: numberoftypicalcolors = 5
-    integer, parameter :: lengthoftypicalcolors = 16
-    character (len=lengthoftypicalcolors), parameter :: typicalcolors(numberoftypicalcolors) = (/&
-              &'red             ','orange          ','yellow          ','green           ', &
-              &'blue            ' /)
+
 
 
 contains
@@ -126,208 +143,358 @@ contains
     end function integer_to_character
 
 
-    function totalsplitfileneeded(totalelements, filesize)
-       implicit none
-       integer  :: totalsplitfileneeded, totalelements, filesize
-       totalsplitfileneeded = 1
-       if(totalelements .le. 0) then
-          print*, 'This is in the "function totalsplitfileneeded(totalelements, filesize)"'
-          print*, '        the value of "totalelements" is ', totalelements, ', not positive.'
-          print*, '        Not reasonable. Then stopped.'
-          stop
-       end if
-       if(filesize .le. 0) then
-          print*, 'This is in the "function totalsplitfileneeded(totalelements, filesize)"'
-          print*, '        the value of "filesize" is ', filesize, ', not positive.'
-          print*, '        Not reasonable. Then stopped.'
-          stop
-       end if
-       if(totalelements .gt. 0) then
-          totalsplitfileneeded = (totalelements - 1)/filesize + 1
-       end if
-       return
-    end function totalsplitfileneeded
+end module fortrancsvtikzbasics
 
 
-    subroutine groupfileopenwithunits(filenameprefix,startingunit,totalfiles)
+module fortrancsvtikzgroupfiles
+    use fortrancsvtikzbasics
+    implicit none
+    character(len=*), parameter          :: fortrancsvtikzfileextension='.csv'
+    integer, parameter                   :: fortrancsvtikzminimumfileunit = 30
+    integer, parameter                   :: fortrancsvtikzmaximumfileunit = 100
+    integer, parameter                   :: fortrancsvtikzgroupinforwidth = 10
+    integer, private                     :: fortrancsvtikzprefixsize
+    integer, private                     :: fortrancsvtikzprefixused
+    integer, private                     :: fortrancsvtikzgroupsize
+    integer, private                     :: fortrancsvtikztotalgroups
+    integer, private, allocatable        :: fortrancsvtikzfilegroupinfor(:,:)
+    character(len=1),private,allocatable :: fortrancsvtikzfilenameprefixes(:)
+
+!   The array fortrancsvtikzfilenameprefixes is used for all file prefix names.
+!   The array fortrancsvtikzfilegroupinfor is used for informations about every file groups.
+!   If fortrancsvtikzfilegroupinfor(groupnumber,1) is 1, the group is being used.
+!      fortrancsvtikzfilegroupinfor(groupnumber,2) is the start position of the prefix name in the above character array.
+!      fortrancsvtikzfilegroupinfor(groupnumber,3) is the final position of the prefix name in the above character array.
+!      fortrancsvtikzfilegroupinfor(groupnumber,4) is the starting unit number.
+!      fortrancsvtikzfilegroupinfor(groupnumber,5) is the total lines to be output in each new file.
+!      fortrancsvtikzfilegroupinfor(groupnumber,6) is the total number of files to be opened.
+!      fortrancsvtikzfilegroupinfor(groupnumber,7) is the starting line (startingline).
+!      fortrancsvtikzfilegroupinfor(groupnumber,8) is the ending line (endingline).
+!      fortrancsvtikzfilegroupinfor(groupnumber,9) is 1, or -1 if (endingline .lt. startingline).
+!      fortrancsvtikzfilegroupinfor(groupnumber,10) is abs(endingline - startingline).
+
+
+contains
+
+    subroutine fortrancsvtikzgroupinitialize()
+        implicit none
+        fortrancsvtikzprefixsize = 2
+        fortrancsvtikzprefixused = 0
+        fortrancsvtikzgroupsize  = 2
+        fortrancsvtikztotalgroups = 0
+        allocate(fortrancsvtikzfilenameprefixes(fortrancsvtikzprefixsize))
+        allocate(fortrancsvtikzfilegroupinfor(fortrancsvtikzgroupsize,fortrancsvtikzgroupinforwidth))
+        return
+    end subroutine fortrancsvtikzgroupinitialize
+
+
+    subroutine fortrancsvtikzgroupfinalize()
+        implicit none
+        if (allocated(fortrancsvtikzfilegroupinfor))   deallocate(fortrancsvtikzfilegroupinfor)
+        if (allocated(fortrancsvtikzfilenameprefixes)) deallocate(fortrancsvtikzfilenameprefixes)
+        fortrancsvtikzprefixsize = 0
+        fortrancsvtikzprefixused = 0
+        fortrancsvtikzgroupsize  = 0
+        fortrancsvtikztotalgroups = 0
+        fortrancsvtikzfilegroupinfor = 0
+        fortrancsvtikzfilenameprefixes = ' '
+        return
+    end subroutine fortrancsvtikzgroupfinalize
+
+
+    function getfortrancsvtikztotalgroups()
+        implicit none
+        integer :: getfortrancsvtikztotalgroups
+        getfortrancsvtikztotalgroups = fortrancsvtikztotalgroups
+        return
+    end function getfortrancsvtikztotalgroups
+
+
+    subroutine filegroupsetupandopen(groupnumber,filenameprefix,startingunit,startingline,endingline,linesineachfile)
        implicit none
        character (len=*), intent(in) :: filenameprefix
-       integer, intent(in) ::  startingunit,totalfiles
-       integer :: i,j,k,l
-       logical :: ex
-       if(startingunit .lt. minimumstartingfileunit) then
-          print*, 'This is in the "groupfileopenwithunits(filenameprefix,startingunit,totalfiles)"'
+       integer,           intent(in) :: groupnumber,startingunit,startingline,endingline,linesineachfile
+       integer,          allocatable :: infortemp(:,:)
+       character(len=1), allocatable :: pretemp(:)
+       character (len=len(filenameprefix)):: at
+       character (len=3):: answer = 'fgh'
+       integer :: i,j,k,l,n,totalfiles
+       logical :: ex, samestring
+
+       if((groupnumber .le. 0) .or. (groupnumber .gt. (fortrancsvtikztotalgroups+1))) then
+          print*, 'In the "filegroupsetupandopen(groupnumber,filenameprefix,startingunit,...,linesineachfile)"'
+          print*, '        the value of "groupnumber" can only be a positive integer: 1, 2, 3, ... in sequence.'
+          print*, '        Furthermore, it can only be the next one, which is ', fortrancsvtikztotalgroups+1
+          print*, '        or one used earlier, which means less than ', fortrancsvtikztotalgroups+1
+          print*, '        Since you are using ', groupnumber, ' , this code run stopped.'
+          stop
+       else if(groupnumber .le. fortrancsvtikztotalgroups) then
+          if(fortrancsvtikzfilegroupinfor(groupnumber,1) .eq. 1) then
+          print*, 'In the "filegroupsetupandopen(groupnumber,filenameprefix,startingunit,...,linesineachfile)"'
+          print*, '        Since the "groupnumber" ', groupnumber, ' is being used now, you can not use it. '
+          print*, '        The next one is ', fortrancsvtikztotalgroups+1
+          print*, '        For the above reason, this code run stopped.'
+          stop
+          end if
+       end if
+
+       at = ' '
+       at = adjustl(filenameprefix)
+       l = len(at)
+       if(l.le.0) then
+          print*, 'In the "filegroupsetupandopen(groupnumber,filenameprefix,startingunit,...,linesineachfile)"'
+          print*, '        with the "groupnumber" ', groupnumber
+          print*, '        Since the filenameprefix is empty, this code run stopped.'
+          stop
+       end if
+
+       do i = 1, fortrancsvtikztotalgroups
+       if(i .ne. groupnumber) then
+           j = fortrancsvtikzfilegroupinfor(i,2)
+           k = fortrancsvtikzfilegroupinfor(i,3)
+           if(k-j+1.eq.l) then
+              samestring = .true.
+              do n = 1, l
+                 if(at(n:n) .ne. fortrancsvtikzfilenameprefixes(j+n-1)) samestring = .false.
+              end do
+              if(samestring) then
+                 print*, 'In the "filegroupsetupandopen(groupnumber,filenameprefix,startingunit,...,linesineachfile)"'
+                 print*, '        with the "groupnumber" ', groupnumber
+                 print*, '        the filenameprefix: "'//at(1:l)//'" was used in previous group number: ', i
+                 print*, '        Although just a WARNING, may be a problem.'
+                 print*, '        Although just a WARNING, may be a problem.'
+                 print*, '        Although just a WARNING, may be a problem.'
+              end if
+           end if
+       end if
+       end do
+
+       if(startingunit .lt. fortrancsvtikzminimumfileunit) then
+          print*, 'In the "filegroupsetupandopen(groupnumber,filenameprefix,startingunit,...,linesineachfile)"'
           print*, '        the value of "startingunit" is ', startingunit, ', being less than ', &
-                          & minimumstartingfileunit, ' .'
+                          & fortrancsvtikzminimumfileunit, ' .'
           print*, '        This code does not support such. Then stopped.'
           stop
        end if
-       if(totalfiles .le. 0) then
-          print*, 'This is in the "groupfileopenwithunits(filenameprefix,startingunit,totalfiles)"'
-          print*, '        the value of "filesize" is ', totalfiles, ', not positive.'
+
+       if(linesineachfile .le. 0) then
+          print*, 'In the "filegroupsetupandopen(groupnumber,filenameprefix,startingunit,...,linesineachfile)"'
+          print*, '        the value of "linesineachfile" is ', linesineachfile, ', not positive.'
           print*, '        Not reasonable. Then stopped.'
           stop
        end if
-       if(startingunit + totalfiles .gt. maximumfileunit) then
-          print*, 'This is in the "groupfileopenwithunits(filenameprefix,startingunit,totalfiles)"'
+
+       totalfiles = abs(startingline - endingline) / linesineachfile + 1
+
+       if(startingunit + totalfiles .gt. fortrancsvtikzmaximumfileunit) then
+          print*, 'In the "filegroupsetupandopen(groupnumber,filenameprefix,startingunit,...,linesineachfile)"'
           print*, '        the value of "startingunit + totalfiles" is ', startingunit + totalfiles, &
-                 &',       greater than ', maximumfileunit, ' .'
+                 &',       greater than ', fortrancsvtikzmaximumfileunit
+          print*, '        which means too many files resulting in too big unit number.'
           print*, '        This code does not support such. Then stopped.'
           stop
        end if
+
+       if((fortrancsvtikzprefixused+l) .gt. fortrancsvtikzprefixsize) then
+          allocate(pretemp(fortrancsvtikzprefixsize))
+          pretemp =  fortrancsvtikzfilenameprefixes
+          deallocate(fortrancsvtikzfilenameprefixes)
+          allocate(  fortrancsvtikzfilenameprefixes(fortrancsvtikzprefixsize+l+100))
+          fortrancsvtikzfilenameprefixes(1:fortrancsvtikzprefixsize) = pretemp(1:fortrancsvtikzprefixsize)
+          fortrancsvtikzprefixsize = fortrancsvtikzprefixsize+l+100
+          deallocate(pretemp)
+       end if
+
+       if(groupnumber .gt. fortrancsvtikztotalgroups) fortrancsvtikztotalgroups = groupnumber
+
+       if(groupnumber .gt. fortrancsvtikzgroupsize) then
+          allocate(infortemp(fortrancsvtikzgroupsize,fortrancsvtikzgroupinforwidth))
+          infortemp = fortrancsvtikzfilegroupinfor
+          deallocate( fortrancsvtikzfilegroupinfor)
+          allocate(   fortrancsvtikzfilegroupinfor(fortrancsvtikzgroupsize+100,fortrancsvtikzgroupinforwidth))
+                      fortrancsvtikzfilegroupinfor(1:fortrancsvtikzgroupsize,1:fortrancsvtikzgroupinforwidth) = &
+                                        &infortemp(1:fortrancsvtikzgroupsize,1:fortrancsvtikzgroupinforwidth)
+          fortrancsvtikzgroupsize = fortrancsvtikzgroupsize+100
+          deallocate(infortemp)
+       end if
+
+       fortrancsvtikzfilegroupinfor(groupnumber,1) = 1
+       j = fortrancsvtikzprefixused + 1
+       k = fortrancsvtikzprefixused + l
+       fortrancsvtikzfilenameprefixes(j:k) = at(1:l)
+       fortrancsvtikzfilegroupinfor(groupnumber,2) = j
+       fortrancsvtikzfilegroupinfor(groupnumber,3) = k
+       fortrancsvtikzfilegroupinfor(groupnumber,4) = startingunit
+       fortrancsvtikzfilegroupinfor(groupnumber,5) = linesineachfile
+       fortrancsvtikzfilegroupinfor(groupnumber,6) = totalfiles
+       fortrancsvtikzfilegroupinfor(groupnumber,7) = startingline
+       fortrancsvtikzfilegroupinfor(groupnumber,8) = endingline
+       fortrancsvtikzfilegroupinfor(groupnumber,9) = 1
+       if (endingline .lt. startingline)           &
+      &fortrancsvtikzfilegroupinfor(groupnumber,9) = -1
+       fortrancsvtikzfilegroupinfor(groupnumber,10)= abs(endingline - startingline)
+
        do i = 1, totalfiles
           j = startingunit + i - 1
           inquire(j,opened=ex)
           if(ex) then
-             print*, 'This is in the "groupfileopenwithunits(filenameprefix,startingunit,totalfiles)"'
+             print*, 'In the "filegroupsetupandopen(groupnumber,filenameprefix,startingunit,...,linesineachfile)"'
              print*, '        the unit number ', j, ' is being used now, which can not be used to open file:'
-             print*, '        '//filenameprefix//trim(integer_to_character(i,l))//'.csv'
+             print*, '        '//at(1:l)//trim(integer_to_character(i,n))//fortrancsvtikzfileextension
              print*, '        Then stopped.'
              stop
           else
-              open(j, file = filenameprefix//trim(integer_to_character(i,l))//'.csv')
+              open(j, file = at(1:l)//trim(integer_to_character(i,n))//fortrancsvtikzfileextension)
           end if
        end do
+
        return
-    end subroutine groupfileopenwithunits
+    end subroutine filegroupsetupandopen
 
 
-    function pickunit(startingunit, filesize, totalfiles, startingelement, element)
+    function pickunitinafilegroup(groupnumber, linenumber)
        implicit none
-       integer  ::    startingunit, filesize, totalfiles, startingelement, element
-       integer  ::    pickunit, i, j, k
-       if(startingunit .lt. minimumstartingfileunit) then
-          print*, 'This is in the "pickunit(startingunit, filesize, totalfiles, startingelement, element)"'
-          print*, '        the value of "startingunit" is ', startingunit, ', being less than ', &
-                          & minimumstartingfileunit, ' .'
-          print*, '        This code does not support such. Then stopped.'
+       integer, intent(in) :: groupnumber, linenumber
+       integer             :: pickunitinafilegroup, i, j, k
+       if((groupnumber .le. 0) .or. (groupnumber .gt. fortrancsvtikztotalgroups)) then
+          print*, 'In the "function pickunitinafilegroup(groupnumber, linenumber)"'
+          print*, '   the value of "groupnumber": ', groupnumber, ' is not available.'
+          print*, 'This code run stopped.'
+          stop
+       else if(fortrancsvtikzfilegroupinfor(groupnumber,1) .ne. 1) then
+          print*, 'In the "function pickunitinafilegroup(groupnumber, linenumber)"'
+          print*, '   the "groupnumber" ', groupnumber, ' is not active now. This code run stopped.'
           stop
        end if
-       if(filesize .le. 0) then
-          print*, 'This is in the "pickunit(startingunit, filesize, totalfiles, startingelement, element)"'
-          print*, '        the value of "filesize" is ', filesize, ', not positive.'
-          print*, '        Not reasonable. Then stopped.'
+
+       k = abs(linenumber - fortrancsvtikzfilegroupinfor(groupnumber,7))
+       if( ((linenumber-fortrancsvtikzfilegroupinfor(groupnumber,7)) * &
+           & fortrancsvtikzfilegroupinfor(groupnumber,9).lt.0) .or. &
+           &     (k .gt. fortrancsvtikzfilegroupinfor(groupnumber,10)) ) then
+          print*, 'In the "function pickunitinafilegroup(groupnumber, linenumber)" '
+          print*, 'with "groupnumber": ', groupnumber
+          print*, '   the "linenumber": ', linenumber, ' is not in the range from ', &
+                 &fortrancsvtikzfilegroupinfor(groupnumber,7),&
+                 &' to ', fortrancsvtikzfilegroupinfor(groupnumber,8)
+          print*, 'Then stopped.'
           stop
+
        end if
-       if(totalfiles .le. 0) then
-          print*, 'This is in the "pickunit(startingunit, filesize, totalfiles, startingelement, element)"'
-          print*, '        the value of "filesize" is ', totalfiles, ', not positive.'
-          print*, '        Not reasonable. Then stopped.'
-          stop
-       end if
-       if(startingunit + totalfiles .gt. maximumfileunit) then
-          print*, 'This is in the "pickunit(startingunit, filesize, totalfiles, startingelement, element)"'
-          print*, '        the value of "startingunit + totalfiles" is ', startingunit + totalfiles, &
-                 &',       greater than ', maximumfileunit, ' .'
-          print*, '        This code does not support such. Then stopped.'
-          stop
-       end if
-       k = abs(element - startingelement) + 1
-       j = (k - 1) / filesize + 1
-       if(j .gt. totalfiles) then
-          print*, 'This is in the "pickunit(startingunit, filesize, totalfiles, startingelement, element)"'
-          print*, '        the new caculated file number is ', j, ' greater than the "totalfiles": ', totalfiles, ' .'
-          print*, '        This should not happen. Then stopped.'
-          stop
-       end if
-       pickunit = startingunit + j - 1
+
+       j = k / fortrancsvtikzfilegroupinfor(groupnumber,5) + 1
+       pickunitinafilegroup = fortrancsvtikzfilegroupinfor(groupnumber,4) + j - 1
+
        return
-    end function pickunit
+    end function pickunitinafilegroup
 
 
-    subroutine firstlinetogroupfiles(startingunit,totalfiles,firstlinewords)
+    subroutine firstlinetoafilegroup(groupnumber,firstlinewords)
        implicit none
+       integer, intent(in)           :: groupnumber
        character (len=*), intent(in) :: firstlinewords
-       integer, intent(in) ::  startingunit,totalfiles
-       integer :: i,j,k,l
-       if(startingunit .lt. minimumstartingfileunit) then
-          print*, 'This is in the "firstlinetogroupfiles(startingunit,totalfiles,firstlinewords)"'
-          print*, '        the value of "startingunit" is ', startingunit, ', being less than ', &
-                          & minimumstartingfileunit, ' .'
-          print*, '        This code does not support such. Then stopped.'
+       integer :: i
+       if((groupnumber .le. 0) .or. (groupnumber .gt. fortrancsvtikztotalgroups)) then
+          print*, 'In the "firstlinetoafilegroup(groupnumber,firstlinewords)"'
+          print*, '   the value of "groupnumber": ', groupnumber, ' is not available. This code run stopped.'
+          stop
+       else if(fortrancsvtikzfilegroupinfor(groupnumber,1) .ne. 1) then
+          print*, 'In the "firstlinetoafilegroup(groupnumber,firstlinewords)"'
+          print*, '   the "groupnumber" ', groupnumber, ' is not active now. This code run stopped.'
           stop
        end if
-       if(totalfiles .le. 0) then
-          print*, 'This is in the "firstlinetogroupfiles(startingunit,totalfiles,firstlinewords)"'
-          print*, '        the value of "filesize" is ', totalfiles, ', not positive.'
-          print*, '        Not reasonable. Then stopped.'
-          stop
-       end if
-       if(startingunit + totalfiles .gt. maximumfileunit) then
-          print*, 'This is in the "firstlinetogroupfiles(startingunit,totalfiles,firstlinewords)"'
-          print*, '        the value of "startingunit + totalfiles" is ', startingunit + totalfiles, &
-                 &',       greater than ', maximumfileunit, ' .'
-          print*, '        This code does not support such. Then stopped.'
-          stop
-       end if
-       do i = 1, totalfiles
-           write(startingunit+i-1, '(a)') trim(firstlinewords)
+
+       do i = 1, fortrancsvtikzfilegroupinfor(groupnumber,6)
+           write(fortrancsvtikzfilegroupinfor(groupnumber,4)+i-1, '(a)') trim(firstlinewords)
        end do
+
        return
-    end subroutine firstlinetogroupfiles
+    end subroutine firstlinetoafilegroup
 
 
-    subroutine groupfileclosewithunits(startingunit,totalfiles)
+    subroutine filegroupclose(groupnumber)
        implicit none
-       integer, intent(in) ::  startingunit,totalfiles
-       integer :: i,j,k,l
-       if(startingunit .lt. minimumstartingfileunit) then
-          print*, 'This is in the "groupfileclosewithunits(startingunit,totalfiles)"'
-          print*, '        the value of "startingunit" is ', startingunit, ', being less than ', &
-                          & minimumstartingfileunit, ' .'
-          print*, '        This code does not support such. Then stopped.'
+       integer, intent(in):: groupnumber
+       integer :: i
+       if((groupnumber .le. 0) .or. (groupnumber .gt. fortrancsvtikztotalgroups)) then
+          print*, 'In the "filegroupclose(groupnumber)"'
+          print*, '   the value of "groupnumber": ', groupnumber, ' is not available. This code run stopped.'
+          stop
+       else if(fortrancsvtikzfilegroupinfor(groupnumber,1) .ne. 1) then
+          print*, 'In the "filegroupclose(groupnumber)"'
+          print*, '   the "groupnumber" ', groupnumber, ' is not active now. This code run stopped.'
           stop
        end if
-       if(totalfiles .le. 0) then
-          print*, 'This is in the "groupfileclosewithunits(startingunit,totalfiles)"'
-          print*, '        the value of "filesize" is ', totalfiles, ', not positive.'
-          print*, '        Not reasonable. Then stopped.'
-          stop
-       end if
-       if(startingunit + totalfiles .gt. maximumfileunit) then
-          print*, 'This is in the "groupfileclosewithunits(startingunit,totalfiles)"'
-          print*, '        the value of "startingunit + totalfiles" is ', startingunit + totalfiles, &
-                 &',       greater than ', maximumfileunit, ' .'
-          print*, '        This code does not support such. Then stopped.'
-          stop
-       end if
-       do i = 1, totalfiles
-           close(startingunit+i-1)
+
+       do i = 1, fortrancsvtikzfilegroupinfor(groupnumber,6)
+           close(fortrancsvtikzfilegroupinfor(groupnumber,4)+i-1)
        end do
+
        return
-    end subroutine groupfileclosewithunits
+    end subroutine filegroupclose
+
+end module fortrancsvtikzgroupfiles
 
 
-end module somebasicdataandroutines
+module fortrancsvtikzallmodules
+    use fortrancsvtikzbasics
+    use fortrancsvtikzgroupfiles
+end module fortrancsvtikzallmodules
 
 
 
 
-program secondstep
+subroutine initialize()
+    use fortrancsvtikzallmodules
     implicit none
+    call fortrancsvtikzgroupinitialize()
+    return
+end subroutine initialize
+
+
+
+
+subroutine finalize()
+    use fortrancsvtikzallmodules
+    implicit none
+    integer :: i
+    do i = 1, getfortrancsvtikztotalgroups()
+        call filegroupclose(i)
+    end do
+    call fortrancsvtikzgroupfinalize()
+    return
+end subroutine finalize
+
+
+
+
+program fortrancsvtikz
+    use fortrancsvtikzallmodules
+    implicit none
+    call initialize()
     call mycomputing()
+    call finalize()
     stop
-end program secondstep
+end program fortrancsvtikz
 
 
 
 
 subroutine mycomputing()
-    use somebasicdataandroutines
+    use fortrancsvtikzallmodules
     implicit none
 
 ! Specific calculation to generate CSV files
 ! Specific calculation to generate CSV files
 
-    integer :: i, j, k, u, totallines, startingunitforsplitfiles, datalinesineachfile, totalfiles, startingline
+    integer :: i, j, k, u, totallines, startingunitforsplitfiles, datalinesineachfile, totalfiles, startingline, groupnumber
     double precision :: a, b, startingangleofsoidal, endinggangleofsoidal, startinxofsoidal, startinyofsoidal, c, d, dk
     double precision :: startingangle, bigf, t, x, y, yprime, tangentangle, normalangle, incidentangle, reflectangle
 
+    groupnumber = 1
     totallines = 10
     startingline = 1
     datalinesineachfile = 50
     startingunitforsplitfiles = 30
-    totalfiles = totalsplitfileneeded(totallines, datalinesineachfile)
 
     a=7.0d0
     b=3.0d0
@@ -343,8 +510,9 @@ subroutine mycomputing()
     close(21)
 
 
-    call groupfileopenwithunits('iterated.alldata.',startingunitforsplitfiles,totalfiles)
-    call firstlinetogroupfiles(startingunitforsplitfiles,totalfiles,'c,d,startingangle,dk,bigf,t,x,y,yprime,'//&
+    call filegroupsetupandopen(groupnumber,'iterated.alldata.',startingunitforsplitfiles,startingline,totallines, &
+                              &datalinesineachfile)
+    call firstlinetoafilegroup(groupnumber,'c,d,startingangle,dk,bigf,t,x,y,yprime,'//&
                               &'tangentangle,normalangle,incidentangle,reflectangle,mycolor')
 
     d=abs(c)
@@ -373,14 +541,14 @@ subroutine mycomputing()
        normalangle = tangentangle - 90.0d0
        incidentangle = normalangle - startingangle
        reflectangle = tangentangle + 90.0d0 + incidentangle
-       u = pickunit(startingunitforsplitfiles, datalinesineachfile, totalfiles, startingline, i)
+       u = pickunitinafilegroup(groupnumber, i)
        write(u,"(1x,13(f20.8, ','),a)") c,d,startingangle,dk,bigf,t,x,y,yprime,tangentangle,normalangle,incidentangle,&
                                        & reflectangle,picktypicalcolor(i)
 
     end do
     end do
 
-    call groupfileclosewithunits(startingunitforsplitfiles,totalfiles)
+    call filegroupclose(groupnumber)
 
     return
 end subroutine mycomputing
