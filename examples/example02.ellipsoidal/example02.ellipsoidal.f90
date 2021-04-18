@@ -78,7 +78,6 @@ module fortrancsvtikzbasics
               &'WildStrawberry  ','Yellow          ','YellowGreen     ','YellowOrange    ' /)
 
 
-
 contains
 
 
@@ -227,6 +226,7 @@ contains
           print*, '        Furthermore, it can only be the next one, which is ', fortrancsvtikztotalgroups+1
           print*, '        or one used earlier, which means less than ', fortrancsvtikztotalgroups+1
           print*, '        Since you are using ', groupnumber, ' , this code run stopped.'
+          call finalize()
           stop
        else if(groupnumber .le. fortrancsvtikztotalgroups) then
           if(fortrancsvtikzfilegroupinfor(groupnumber,1) .eq. 1) then
@@ -234,6 +234,7 @@ contains
           print*, '        Since the "groupnumber" ', groupnumber, ' is being used now, you can not use it. '
           print*, '        The next one is ', fortrancsvtikztotalgroups+1
           print*, '        For the above reason, this code run stopped.'
+          call finalize()
           stop
           end if
        end if
@@ -245,6 +246,7 @@ contains
           print*, 'In the "filegroupsetupandopen(groupnumber,filenameprefix,startingunit,...,linesineachfile)"'
           print*, '        with the "groupnumber" ', groupnumber
           print*, '        Since the filenameprefix is empty, this code run stopped.'
+          call finalize()
           stop
        end if
 
@@ -274,6 +276,7 @@ contains
           print*, '        the value of "startingunit" is ', startingunit, ', being less than ', &
                           & fortrancsvtikzminimumfileunit, ' .'
           print*, '        This code does not support such. Then stopped.'
+          call finalize()
           stop
        end if
 
@@ -281,6 +284,7 @@ contains
           print*, 'In the "filegroupsetupandopen(groupnumber,filenameprefix,startingunit,...,linesineachfile)"'
           print*, '        the value of "linesineachfile" is ', linesineachfile, ', not positive.'
           print*, '        Not reasonable. Then stopped.'
+          call finalize()
           stop
        end if
 
@@ -292,6 +296,7 @@ contains
                  &',       greater than ', fortrancsvtikzmaximumfileunit
           print*, '        which means too many files resulting in too big unit number.'
           print*, '        This code does not support such. Then stopped.'
+          call finalize()
           stop
        end if
 
@@ -342,6 +347,7 @@ contains
              print*, '        the unit number ', j, ' is being used now, which can not be used to open file:'
              print*, '        '//at(1:l)//trim(integer_to_character(i,n))//fortrancsvtikzfileextension
              print*, '        Then stopped.'
+             call finalize()
              stop
           else
               open(j, file = at(1:l)//trim(integer_to_character(i,n))//fortrancsvtikzfileextension)
@@ -360,10 +366,12 @@ contains
           print*, 'In the "function pickunitinafilegroup(groupnumber, linenumber)"'
           print*, '   the value of "groupnumber": ', groupnumber, ' is not available.'
           print*, 'This code run stopped.'
+          call finalize()
           stop
        else if(fortrancsvtikzfilegroupinfor(groupnumber,1) .ne. 1) then
           print*, 'In the "function pickunitinafilegroup(groupnumber, linenumber)"'
           print*, '   the "groupnumber" ', groupnumber, ' is not active now. This code run stopped.'
+          call finalize()
           stop
        end if
 
@@ -377,6 +385,7 @@ contains
                  &fortrancsvtikzfilegroupinfor(groupnumber,7),&
                  &' to ', fortrancsvtikzfilegroupinfor(groupnumber,8)
           print*, 'Then stopped.'
+          call finalize()
           stop
 
        end if
@@ -396,10 +405,12 @@ contains
        if((groupnumber .le. 0) .or. (groupnumber .gt. fortrancsvtikztotalgroups)) then
           print*, 'In the "firstlinetoafilegroup(groupnumber,firstlinewords)"'
           print*, '   the value of "groupnumber": ', groupnumber, ' is not available. This code run stopped.'
+          call finalize()
           stop
        else if(fortrancsvtikzfilegroupinfor(groupnumber,1) .ne. 1) then
           print*, 'In the "firstlinetoafilegroup(groupnumber,firstlinewords)"'
           print*, '   the "groupnumber" ', groupnumber, ' is not active now. This code run stopped.'
+          call finalize()
           stop
        end if
 
@@ -418,13 +429,16 @@ contains
        if((groupnumber .le. 0) .or. (groupnumber .gt. fortrancsvtikztotalgroups)) then
           print*, 'In the "filegroupclose(groupnumber)"'
           print*, '   the value of "groupnumber": ', groupnumber, ' is not available. This code run stopped.'
+          call finalize()
           stop
        else if(fortrancsvtikzfilegroupinfor(groupnumber,1) .ne. 1) then
           print*, 'In the "filegroupclose(groupnumber)"'
           print*, '   the "groupnumber" ', groupnumber, ' is not active now. This code run stopped.'
+          call finalize()
           stop
        end if
 
+       fortrancsvtikzfilegroupinfor(groupnumber,1) = 1
        do i = 1, fortrancsvtikzfilegroupinfor(groupnumber,6)
            close(fortrancsvtikzfilegroupinfor(groupnumber,4)+i-1)
        end do
