@@ -186,7 +186,7 @@ contains
 
     subroutine fortrancsvtikzgroupinitialize()
         implicit none
-        fortrancsvtikzprefixsize = 200
+        fortrancsvtikzprefixsize = 20
         fortrancsvtikzprefixused = 0
         fortrancsvtikzgroupsize  = 20
         fortrancsvtikztotalgroups = 0
@@ -219,14 +219,13 @@ contains
        integer,          allocatable :: infortemp(:,:)
        character(len=1), allocatable :: pretemp(:)
        character (len=len(filenameprefix)):: at
-       character (len=3):: answer = 'fgh'
-       integer :: i,j,k,l,n,totalfiles
+       integer :: i,j,k,l,n,totalfiles,inforextent,preextent
        logical :: ex, samestring
 
        if((groupnumber .le. 0) .or. (groupnumber .gt. (fortrancsvtikztotalgroups+1))) then
           print*, 'In the "filegroupsetupandopen(groupnumber,filenameprefix,startingunit,...,linesineachfile)"'
           print*, '        the value of "groupnumber" can only be a positive integer: 1, 2, 3, ... in sequence.'
-          print*, '        Furthermore, it can only be the next one, which is ', fortrancsvtikztotalgroups+1
+          print*, '        Here it can only be the next one, which is ', fortrancsvtikztotalgroups+1
           print*, '        or one used earlier, which means less than ', fortrancsvtikztotalgroups+1
           print*, '        Since you are using ', groupnumber, ' , this code run stopped.'
           call finalize()
@@ -303,33 +302,38 @@ contains
           stop
        end if
 
+       preextent = 100
        if((fortrancsvtikzprefixused+l) .gt. fortrancsvtikzprefixsize) then
           allocate(pretemp(fortrancsvtikzprefixsize))
           pretemp =  fortrancsvtikzfilenameprefixes
           deallocate(fortrancsvtikzfilenameprefixes)
-          allocate(  fortrancsvtikzfilenameprefixes(fortrancsvtikzprefixsize+l+100))
+          allocate(  fortrancsvtikzfilenameprefixes(fortrancsvtikzprefixsize+l+preextent))
           fortrancsvtikzfilenameprefixes(1:fortrancsvtikzprefixsize) = pretemp(1:fortrancsvtikzprefixsize)
-          fortrancsvtikzprefixsize = fortrancsvtikzprefixsize+l+100
+          fortrancsvtikzprefixsize = fortrancsvtikzprefixsize+l+preextent
           deallocate(pretemp)
        end if
 
        if(groupnumber .gt. fortrancsvtikztotalgroups) fortrancsvtikztotalgroups = groupnumber
 
+       inforextent = 100
        if(groupnumber .gt. fortrancsvtikzgroupsize) then
           allocate(infortemp(fortrancsvtikzgroupsize,fortrancsvtikzgroupinforwidth))
           infortemp = fortrancsvtikzfilegroupinfor
           deallocate( fortrancsvtikzfilegroupinfor)
-          allocate(   fortrancsvtikzfilegroupinfor(fortrancsvtikzgroupsize+100,fortrancsvtikzgroupinforwidth))
+          allocate(   fortrancsvtikzfilegroupinfor(fortrancsvtikzgroupsize+inforextent,fortrancsvtikzgroupinforwidth))
                       fortrancsvtikzfilegroupinfor(1:fortrancsvtikzgroupsize,1:fortrancsvtikzgroupinforwidth) = &
                                         &infortemp(1:fortrancsvtikzgroupsize,1:fortrancsvtikzgroupinforwidth)
-          fortrancsvtikzgroupsize = fortrancsvtikzgroupsize+100
+          fortrancsvtikzgroupsize = fortrancsvtikzgroupsize + inforextent
           deallocate(infortemp)
        end if
 
        fortrancsvtikzfilegroupinfor(groupnumber,1) = 1
        j = fortrancsvtikzprefixused + 1
        k = fortrancsvtikzprefixused + l
-       fortrancsvtikzfilenameprefixes(j:k) = at(1:l)
+       fortrancsvtikzprefixused = k
+       do n = 1, l
+          fortrancsvtikzfilenameprefixes(j+n-1) = at(n:n)
+       end do
        fortrancsvtikzfilegroupinfor(groupnumber,2) = j
        fortrancsvtikzfilegroupinfor(groupnumber,3) = k
        fortrancsvtikzfilegroupinfor(groupnumber,4) = startingunit
@@ -443,7 +447,8 @@ contains
           inquire(k,opened=ex)
           if(ex) close(k)
        end do
-       fortrancsvtikzfilegroupinfor(groupnumber,1:fortrancsvtikzgroupinforwidth) = 0
+       !fortrancsvtikzfilegroupinfor(groupnumber,1:fortrancsvtikzgroupinforwidth) = 0
+       fortrancsvtikzfilegroupinfor(groupnumber,1:1) = 0
 
        return
     end subroutine filegroupclose
