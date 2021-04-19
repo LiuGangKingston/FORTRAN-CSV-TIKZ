@@ -1,6 +1,6 @@
-!   This is example01.500beams.data.split source file for
+!   This is example02.ellipsoidal source file for
 !       https://github.com/LiuGangKingston/FORTRAN-CSV-TIKZ.git
-!            Version 2.1
+!            Version 2.2
 !   free for non-commercial use.
 !   Please send us emails for any problems/suggestions/comments.
 !   Please be advised that none of us accept any responsibility
@@ -48,12 +48,12 @@ module fortrancsvtikzbasics
     real*8,  parameter :: rydbergconstant               = 1.0973731568160D7    !1/m
     real*8,  parameter :: secondradiationconstant       = 1.438776877D-2       !m$\dot K$
     real*8,  parameter :: speedoflightinvacuum          = 2.99792458D+8        !"m/s"
-    real*8,  parameter :: thomsoncrosssection           = 6.6524587321D-29     !$m^2$
+    real*8,  parameter :: thomsoncrosssection           = 6.6524587321D-29     ! $m^2$
     real*8,  parameter :: universalgasconstant          = 8.314462618D0        !"J/(mol$\cdot $K)"
     real*8,  parameter :: universalgravitationalconst   = 6.67430D-11          !"N$\cdot $m$^2$/kg$^2$"
     real*8,  parameter :: vacuumelectricpermittivity    = 8.8541878128D-12     !"F/m"
-    real*8,  parameter :: vacuummagneticpermeability    = 1.25663706212D-6     !"N/$A^2$"    
-    
+    real*8,  parameter :: vacuummagneticpermeability    = 1.25663706212D-6     !"N/$A^2$"
+
     integer, parameter :: numberoftikzcolors = 19
     integer, parameter :: lengthoftikzcolors = 16
     character (len=lengthoftikzcolors), parameter :: tikzcolors(numberoftikzcolors) =  (/&
@@ -152,6 +152,7 @@ contains
        return
     end function integer_to_character
 
+
 end module fortrancsvtikzbasics
 
 
@@ -166,7 +167,10 @@ module fortrancsvtikzgroupfiles
     integer, private                     :: fortrancsvtikzprefixused
     integer, private                     :: fortrancsvtikzgroupsize
     integer, private                     :: fortrancsvtikztotalgroups
+    integer, private                     :: fortrancsvtikzallprefixsize
+    integer, private                     :: fortrancsvtikztotalallprefix
     integer, private, allocatable        :: fortrancsvtikzfilegroupinfor(:,:)
+    integer, private, allocatable        :: fortrancsvtikzallprefixsaved(:,:)
     character(len=1),private,allocatable :: fortrancsvtikzfilenameprefixes(:)
 
 !   The array fortrancsvtikzfilenameprefixes is used for all file prefix names.
@@ -181,17 +185,27 @@ module fortrancsvtikzgroupfiles
 !      fortrancsvtikzfilegroupinfor(groupnumber,8) is the ending line (endingline).
 !      fortrancsvtikzfilegroupinfor(groupnumber,9) is 1, or -1 if (endingline .lt. startingline).
 !      fortrancsvtikzfilegroupinfor(groupnumber,10) is abs(endingline - startingline).
+!
+!   The array fortrancsvtikzallprefixsaved is used for information for all file prefix names.
+!       fortrancsvtikzallprefixsaved(i,1) is the group number.
+!       fortrancsvtikzallprefixsaved(i,2) is the start position of the prefix name in the above character array of the group number.
+!       fortrancsvtikzallprefixsaved(i,3) is the final position of the prefix name in the above character array of the group number.
+!   So even if a groupnumber is overwritten, the file prefix used earlier is still saved this way.
 
 
 contains
 
+
     subroutine fortrancsvtikzgroupinitialize()
         implicit none
-        fortrancsvtikzprefixsize = 2
+        fortrancsvtikzprefixsize = 200
         fortrancsvtikzprefixused = 0
-        fortrancsvtikzgroupsize  = 2
+        fortrancsvtikzgroupsize  = 20
         fortrancsvtikztotalgroups = 0
+        fortrancsvtikzallprefixsize = 20
+        fortrancsvtikztotalallprefix = 0
         allocate(fortrancsvtikzfilenameprefixes(fortrancsvtikzprefixsize))
+        allocate(fortrancsvtikzallprefixsaved(fortrancsvtikzallprefixsize,3))
         allocate(fortrancsvtikzfilegroupinfor(fortrancsvtikzgroupsize,fortrancsvtikzgroupinforwidth))
         return
     end subroutine fortrancsvtikzgroupinitialize
@@ -200,25 +214,20 @@ contains
     subroutine fortrancsvtikzgroupfinalize()
         implicit none
         integer :: i
-        do i = 1, getfortrancsvtikztotalgroups()
+        do i = 1, fortrancsvtikztotalgroups
             call filegroupclose(i)
         end do
         if (allocated(fortrancsvtikzfilegroupinfor))   deallocate(fortrancsvtikzfilegroupinfor)
+        if (allocated(fortrancsvtikzallprefixsaved))   deallocate(fortrancsvtikzallprefixsaved)
         if (allocated(fortrancsvtikzfilenameprefixes)) deallocate(fortrancsvtikzfilenameprefixes)
         fortrancsvtikzprefixsize = 0
         fortrancsvtikzprefixused = 0
         fortrancsvtikzgroupsize  = 0
         fortrancsvtikztotalgroups = 0
+        fortrancsvtikzallprefixsize = 0
+        fortrancsvtikztotalallprefix = 0
         return
     end subroutine fortrancsvtikzgroupfinalize
-
-
-    function getfortrancsvtikztotalgroups()
-        implicit none
-        integer :: getfortrancsvtikztotalgroups
-        getfortrancsvtikztotalgroups = fortrancsvtikztotalgroups
-        return
-    end function getfortrancsvtikztotalgroups
 
 
     subroutine filegroupsetupandopen(groupnumber,filenameprefix,startingunit,startingline,endingline,linesineachfile)
@@ -228,14 +237,14 @@ contains
        integer,          allocatable :: infortemp(:,:)
        character(len=1), allocatable :: pretemp(:)
        character (len=len(filenameprefix)):: at
-       character (len=3):: answer = 'fgh'
-       integer :: i,j,k,l,n,totalfiles
+       integer :: i,j,k,l,n,totalfiles,inforextent,preextent
        logical :: ex, samestring
 
        if((groupnumber .le. 0) .or. (groupnumber .gt. (fortrancsvtikztotalgroups+1))) then
           print*, 'In the "filegroupsetupandopen(groupnumber,filenameprefix,startingunit,...,linesineachfile)"'
           print*, '        the value of "groupnumber" can only be a positive integer: 1, 2, 3, ... in sequence.'
-          print*, '        Furthermore, it can only be the next one, which is ', fortrancsvtikztotalgroups+1
+          print*, '        Here it can only be the (next) one, which is ', fortrancsvtikztotalgroups+1
+          if(fortrancsvtikztotalgroups .gt. 0) &
           print*, '        or one used earlier, which means less than ', fortrancsvtikztotalgroups+1
           print*, '        Since you are using ', groupnumber, ' , this code run stopped.'
           call finalize()
@@ -253,7 +262,7 @@ contains
 
        at = ' '
        at = adjustl(filenameprefix)
-       l = len(at)
+       l = len_trim(at)
        if(l.le.0) then
           print*, 'In the "filegroupsetupandopen(groupnumber,filenameprefix,startingunit,...,linesineachfile)"'
           print*, '        with the "groupnumber" ', groupnumber
@@ -262,10 +271,9 @@ contains
           stop
        end if
 
-       do i = 1, fortrancsvtikztotalgroups
-       if(i .ne. groupnumber) then
-           j = fortrancsvtikzfilegroupinfor(i,2)
-           k = fortrancsvtikzfilegroupinfor(i,3)
+       do  i = 1, fortrancsvtikztotalallprefix
+           j = fortrancsvtikzallprefixsaved(i,2)
+           k = fortrancsvtikzallprefixsaved(i,3)
            if(k-j+1.eq.l) then
               samestring = .true.
               do n = 1, l
@@ -274,17 +282,19 @@ contains
               if(samestring) then
                  print*, 'In the "filegroupsetupandopen(groupnumber,filenameprefix,startingunit,...,linesineachfile)"'
                  print*, '        with the "groupnumber" ', groupnumber
-                 print*, '        the filenameprefix: "'//at(1:l)//'" was used in previous group number: ', i
-                 print*, '        Although just a WARNING, may be a problem.'
-                 print*, '        Although just a WARNING, may be a problem.'
-                 print*, '        Although just a WARNING, may be a problem.'
+                 print*, '        the filenameprefix: "'//at(1:l)//'" was used in previous group number: ', &
+                                & fortrancsvtikzallprefixsaved(i,1)
+                 print*, '        when this subroutine was called at ', i, ' time(s).'
+                 print*, '        Although just a WARNING, maybe you are trying to overwrite exsisting file(s).'
+                 print*, '        Although just a WARNING, maybe you are trying to overwrite exsisting file(s).'
+                 print*, '        Although just a WARNING, maybe you are trying to overwrite exsisting file(s).'
               end if
            end if
-       end if
        end do
 
        if(startingunit .lt. fortrancsvtikzminimumfileunit) then
           print*, 'In the "filegroupsetupandopen(groupnumber,filenameprefix,startingunit,...,linesineachfile)"'
+          print*, '        with the "groupnumber" ', groupnumber
           print*, '        the value of "startingunit" is ', startingunit, ', being less than ', &
                           & fortrancsvtikzminimumfileunit, ' .'
           print*, '        This code does not support such. Then stopped.'
@@ -294,6 +304,7 @@ contains
 
        if(linesineachfile .le. 0) then
           print*, 'In the "filegroupsetupandopen(groupnumber,filenameprefix,startingunit,...,linesineachfile)"'
+          print*, '        with the "groupnumber" ', groupnumber
           print*, '        the value of "linesineachfile" is ', linesineachfile, ', not positive.'
           print*, '        Not reasonable. Then stopped.'
           call finalize()
@@ -304,6 +315,7 @@ contains
 
        if(startingunit + totalfiles .gt. fortrancsvtikzmaximumfileunit) then
           print*, 'In the "filegroupsetupandopen(groupnumber,filenameprefix,startingunit,...,linesineachfile)"'
+          print*, '        with the "groupnumber" ', groupnumber
           print*, '        the value of "startingunit + totalfiles" is ', startingunit + totalfiles, &
                  &',       greater than ', fortrancsvtikzmaximumfileunit
           print*, '        which means too many files resulting in too big unit number.'
@@ -312,33 +324,50 @@ contains
           stop
        end if
 
+       preextent = 100
        if((fortrancsvtikzprefixused+l) .gt. fortrancsvtikzprefixsize) then
           allocate(pretemp(fortrancsvtikzprefixsize))
           pretemp =  fortrancsvtikzfilenameprefixes
           deallocate(fortrancsvtikzfilenameprefixes)
-          allocate(  fortrancsvtikzfilenameprefixes(fortrancsvtikzprefixsize+l+100))
+          allocate(  fortrancsvtikzfilenameprefixes(fortrancsvtikzprefixsize+l+preextent))
           fortrancsvtikzfilenameprefixes(1:fortrancsvtikzprefixsize) = pretemp(1:fortrancsvtikzprefixsize)
-          fortrancsvtikzprefixsize = fortrancsvtikzprefixsize+l+100
+          fortrancsvtikzprefixsize = fortrancsvtikzprefixsize+l+preextent
           deallocate(pretemp)
        end if
 
        if(groupnumber .gt. fortrancsvtikztotalgroups) fortrancsvtikztotalgroups = groupnumber
 
+       inforextent = 100
        if(groupnumber .gt. fortrancsvtikzgroupsize) then
           allocate(infortemp(fortrancsvtikzgroupsize,fortrancsvtikzgroupinforwidth))
           infortemp = fortrancsvtikzfilegroupinfor
           deallocate( fortrancsvtikzfilegroupinfor)
-          allocate(   fortrancsvtikzfilegroupinfor(fortrancsvtikzgroupsize+100,fortrancsvtikzgroupinforwidth))
+          allocate(   fortrancsvtikzfilegroupinfor(fortrancsvtikzgroupsize+inforextent,fortrancsvtikzgroupinforwidth))
                       fortrancsvtikzfilegroupinfor(1:fortrancsvtikzgroupsize,1:fortrancsvtikzgroupinforwidth) = &
                                         &infortemp(1:fortrancsvtikzgroupsize,1:fortrancsvtikzgroupinforwidth)
-          fortrancsvtikzgroupsize = fortrancsvtikzgroupsize+100
+          fortrancsvtikzgroupsize = fortrancsvtikzgroupsize + inforextent
+          deallocate(infortemp)
+       end if
+
+       fortrancsvtikztotalallprefix = fortrancsvtikztotalallprefix + 1
+       if(fortrancsvtikztotalallprefix .gt. fortrancsvtikzallprefixsize) then
+          allocate(infortemp(fortrancsvtikzallprefixsize,3))
+          infortemp = fortrancsvtikzallprefixsaved
+          deallocate( fortrancsvtikzallprefixsaved)
+          allocate(   fortrancsvtikzallprefixsaved(fortrancsvtikzallprefixsize+inforextent,3))
+                      fortrancsvtikzallprefixsaved(1:fortrancsvtikzallprefixsize,1:3) = &
+                                        &infortemp(1:fortrancsvtikzallprefixsize,1:3)
+          fortrancsvtikzallprefixsize = fortrancsvtikzallprefixsize + inforextent
           deallocate(infortemp)
        end if
 
        fortrancsvtikzfilegroupinfor(groupnumber,1) = 1
        j = fortrancsvtikzprefixused + 1
        k = fortrancsvtikzprefixused + l
-       fortrancsvtikzfilenameprefixes(j:k) = at(1:l)
+       fortrancsvtikzprefixused = k
+       do n = 1, l
+          fortrancsvtikzfilenameprefixes(j+n-1) = at(n:n)
+       end do
        fortrancsvtikzfilegroupinfor(groupnumber,2) = j
        fortrancsvtikzfilegroupinfor(groupnumber,3) = k
        fortrancsvtikzfilegroupinfor(groupnumber,4) = startingunit
@@ -351,11 +380,16 @@ contains
       &fortrancsvtikzfilegroupinfor(groupnumber,9) = -1
        fortrancsvtikzfilegroupinfor(groupnumber,10)= abs(endingline - startingline)
 
+       fortrancsvtikzallprefixsaved(fortrancsvtikztotalallprefix,1) = groupnumber
+       fortrancsvtikzallprefixsaved(fortrancsvtikztotalallprefix,2) = fortrancsvtikzfilegroupinfor(groupnumber,2)
+       fortrancsvtikzallprefixsaved(fortrancsvtikztotalallprefix,3) = fortrancsvtikzfilegroupinfor(groupnumber,3)
+
        do i = 1, totalfiles
           j = startingunit + i - 1
           inquire(j,opened=ex)
           if(ex) then
              print*, 'In the "filegroupsetupandopen(groupnumber,filenameprefix,startingunit,...,linesineachfile)"'
+             print*, '        with the "groupnumber" ', groupnumber
              print*, '        the unit number ', j, ' is being used now, which can not be used to open file:'
              print*, '        '//at(1:l)//trim(integer_to_character(i,n))//fortrancsvtikzfileextension
              print*, '        Then stopped.'
@@ -387,12 +421,13 @@ contains
           stop
        end if
 
-       k = abs(linenumber - fortrancsvtikzfilegroupinfor(groupnumber,7))
-       if( ((linenumber-fortrancsvtikzfilegroupinfor(groupnumber,7)) * &
-           & fortrancsvtikzfilegroupinfor(groupnumber,9).lt.0) .or. &
-           &     (k .gt. fortrancsvtikzfilegroupinfor(groupnumber,10)) ) then
+       i = linenumber - fortrancsvtikzfilegroupinfor(groupnumber,7)
+       k = abs(i)
+       if(   ((i*fortrancsvtikzfilegroupinfor(groupnumber,9)) .lt. 0)  &
+           & .or. &
+           & (k .gt. fortrancsvtikzfilegroupinfor(groupnumber,10))    ) then
           print*, 'In the "function pickunitinafilegroup(groupnumber, linenumber)" '
-          print*, 'with "groupnumber": ', groupnumber
+          print*, '   with "groupnumber": ', groupnumber
           print*, '   the "linenumber": ', linenumber, ' is not in the range from ', &
                  &fortrancsvtikzfilegroupinfor(groupnumber,7),&
                  &' to ', fortrancsvtikzfilegroupinfor(groupnumber,8)
@@ -437,23 +472,24 @@ contains
     subroutine filegroupclose(groupnumber)
        implicit none
        integer, intent(in):: groupnumber
-       integer :: i
+       integer :: i, k
+       logical :: ex
        if((groupnumber .le. 0) .or. (groupnumber .gt. fortrancsvtikztotalgroups)) then
           print*, 'In the "filegroupclose(groupnumber)"'
           print*, '   the value of "groupnumber": ', groupnumber, ' is not available. This code run stopped.'
-          call finalize()
-          stop
-       else if(fortrancsvtikzfilegroupinfor(groupnumber,1) .ne. 1) then
-          print*, 'In the "filegroupclose(groupnumber)"'
-          print*, '   the "groupnumber" ', groupnumber, ' is not active now. This code run stopped.'
-          call finalize()
+          if (allocated(fortrancsvtikzfilegroupinfor))   deallocate(fortrancsvtikzfilegroupinfor)
+          if (allocated(fortrancsvtikzallprefixsaved))   deallocate(fortrancsvtikzallprefixsaved)
+          if (allocated(fortrancsvtikzfilenameprefixes)) deallocate(fortrancsvtikzfilenameprefixes)
           stop
        end if
 
-       fortrancsvtikzfilegroupinfor(groupnumber,1) = 1
        do i = 1, fortrancsvtikzfilegroupinfor(groupnumber,6)
-           close(fortrancsvtikzfilegroupinfor(groupnumber,4)+i-1)
+          k = fortrancsvtikzfilegroupinfor(groupnumber,4)+i-1
+          inquire(k,opened=ex)
+          if(ex) close(k)
        end do
+       !fortrancsvtikzfilegroupinfor(groupnumber,1:fortrancsvtikzgroupinforwidth) = 0
+       fortrancsvtikzfilegroupinfor(groupnumber,1:1) = 0
 
        return
     end subroutine filegroupclose
