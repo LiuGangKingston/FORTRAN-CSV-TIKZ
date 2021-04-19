@@ -199,7 +199,7 @@ contains
     subroutine fortrancsvtikzgroupfinalize()
         implicit none
         integer :: i
-        do i = 1, getfortrancsvtikztotalgroups()
+        do i = 1, fortrancsvtikztotalgroups
             call filegroupclose(i)
         end do
         if (allocated(fortrancsvtikzfilegroupinfor))   deallocate(fortrancsvtikzfilegroupinfor)
@@ -210,14 +210,6 @@ contains
         fortrancsvtikztotalgroups = 0
         return
     end subroutine fortrancsvtikzgroupfinalize
-
-
-    function getfortrancsvtikztotalgroups()
-        implicit none
-        integer :: getfortrancsvtikztotalgroups
-        getfortrancsvtikztotalgroups = fortrancsvtikztotalgroups
-        return
-    end function getfortrancsvtikztotalgroups
 
 
     subroutine filegroupsetupandopen(groupnumber,filenameprefix,startingunit,startingline,endingline,linesineachfile)
