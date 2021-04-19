@@ -266,9 +266,9 @@ contains
                  print*, 'In the "filegroupsetupandopen(groupnumber,filenameprefix,startingunit,...,linesineachfile)"'
                  print*, '        with the "groupnumber" ', groupnumber
                  print*, '        the filenameprefix: "'//at(1:l)//'" was used in previous group number: ', i
-                 print*, '        Although just a WARNING, may be a problem.'
-                 print*, '        Although just a WARNING, may be a problem.'
-                 print*, '        Although just a WARNING, may be a problem.'
+                 print*, '        Although just a WARNING, maybe you are trying to overwrite exsisting file(s).'
+                 print*, '        Although just a WARNING, maybe you are trying to overwrite exsisting file(s).'
+                 print*, '        Although just a WARNING, maybe you are trying to overwrite exsisting file(s).'
               end if
            end if
        end if
