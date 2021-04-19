@@ -197,11 +197,11 @@ contains
 
     subroutine fortrancsvtikzgroupinitialize()
         implicit none
-        fortrancsvtikzprefixsize = 2
+        fortrancsvtikzprefixsize = 200
         fortrancsvtikzprefixused = 0
-        fortrancsvtikzgroupsize  = 2
+        fortrancsvtikzgroupsize  = 20
         fortrancsvtikztotalgroups = 0
-        fortrancsvtikzallprefixsize = 2
+        fortrancsvtikzallprefixsize = 20
         fortrancsvtikztotalallprefix = 0
         allocate(fortrancsvtikzfilenameprefixes(fortrancsvtikzprefixsize))
         allocate(fortrancsvtikzallprefixsaved(fortrancsvtikzallprefixsize,3))
@@ -323,7 +323,7 @@ contains
           stop
        end if
 
-       preextent = 1
+       preextent = 100
        if((fortrancsvtikzprefixused+l) .gt. fortrancsvtikzprefixsize) then
           allocate(pretemp(fortrancsvtikzprefixsize))
           pretemp =  fortrancsvtikzfilenameprefixes
@@ -336,7 +336,7 @@ contains
 
        if(groupnumber .gt. fortrancsvtikztotalgroups) fortrancsvtikztotalgroups = groupnumber
 
-       inforextent = 1
+       inforextent = 100
        if(groupnumber .gt. fortrancsvtikzgroupsize) then
           allocate(infortemp(fortrancsvtikzgroupsize,fortrancsvtikzgroupinforwidth))
           infortemp = fortrancsvtikzfilegroupinfor
