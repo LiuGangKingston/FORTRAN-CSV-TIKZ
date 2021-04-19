@@ -244,7 +244,7 @@ contains
 
        at = ' '
        at = adjustl(filenameprefix)
-       l = len(at)
+       l = len_trim(at)
        if(l.le.0) then
           print*, 'In the "filegroupsetupandopen(groupnumber,filenameprefix,startingunit,...,linesineachfile)"'
           print*, '        with the "groupnumber" ', groupnumber
