@@ -47,12 +47,12 @@ module fortrancsvtikzbasics
     real*8,  parameter :: rydbergconstant               = 1.0973731568160D7    !1/m
     real*8,  parameter :: secondradiationconstant       = 1.438776877D-2       !m$\dot K$
     real*8,  parameter :: speedoflightinvacuum          = 2.99792458D+8        !"m/s"
-    real*8,  parameter :: thomsoncrosssection           = 6.6524587321D-29     !$m^2$
+    real*8,  parameter :: thomsoncrosssection           = 6.6524587321D-29     ! $m^2$
     real*8,  parameter :: universalgasconstant          = 8.314462618D0        !"J/(mol$\cdot $K)"
     real*8,  parameter :: universalgravitationalconst   = 6.67430D-11          !"N$\cdot $m$^2$/kg$^2$"
     real*8,  parameter :: vacuumelectricpermittivity    = 8.8541878128D-12     !"F/m"
     real*8,  parameter :: vacuummagneticpermeability    = 1.25663706212D-6     !"N/$A^2$"
-    
+
     integer, parameter :: numberoftikzcolors = 19
     integer, parameter :: lengthoftikzcolors = 16
     character (len=lengthoftikzcolors), parameter :: tikzcolors(numberoftikzcolors) =  (/&
@@ -315,9 +315,9 @@ contains
           allocate(pretemp(fortrancsvtikzprefixsize))
           pretemp =  fortrancsvtikzfilenameprefixes
           deallocate(fortrancsvtikzfilenameprefixes)
-          allocate(  fortrancsvtikzfilenameprefixes(fortrancsvtikzprefixsize+l+100))
+          allocate(  fortrancsvtikzfilenameprefixes(fortrancsvtikzprefixsize+l+1))
           fortrancsvtikzfilenameprefixes(1:fortrancsvtikzprefixsize) = pretemp(1:fortrancsvtikzprefixsize)
-          fortrancsvtikzprefixsize = fortrancsvtikzprefixsize+l+100
+          fortrancsvtikzprefixsize = fortrancsvtikzprefixsize+l+1
           deallocate(pretemp)
        end if
 
@@ -327,10 +327,10 @@ contains
           allocate(infortemp(fortrancsvtikzgroupsize,fortrancsvtikzgroupinforwidth))
           infortemp = fortrancsvtikzfilegroupinfor
           deallocate( fortrancsvtikzfilegroupinfor)
-          allocate(   fortrancsvtikzfilegroupinfor(fortrancsvtikzgroupsize+100,fortrancsvtikzgroupinforwidth))
+          allocate(   fortrancsvtikzfilegroupinfor(fortrancsvtikzgroupsize+1,fortrancsvtikzgroupinforwidth))
                       fortrancsvtikzfilegroupinfor(1:fortrancsvtikzgroupsize,1:fortrancsvtikzgroupinforwidth) = &
                                         &infortemp(1:fortrancsvtikzgroupsize,1:fortrancsvtikzgroupinforwidth)
-          fortrancsvtikzgroupsize = fortrancsvtikzgroupsize+100
+          fortrancsvtikzgroupsize = fortrancsvtikzgroupsize+1
           deallocate(infortemp)
        end if
 
@@ -436,23 +436,20 @@ contains
     subroutine filegroupclose(groupnumber)
        implicit none
        integer, intent(in):: groupnumber
-       integer :: i
+       integer :: i, k
+       logical :: ex
        if((groupnumber .le. 0) .or. (groupnumber .gt. fortrancsvtikztotalgroups)) then
           print*, 'In the "filegroupclose(groupnumber)"'
           print*, '   the value of "groupnumber": ', groupnumber, ' is not available. This code run stopped.'
-          call finalize()
-          stop
-       else if(fortrancsvtikzfilegroupinfor(groupnumber,1) .ne. 1) then
-          print*, 'In the "filegroupclose(groupnumber)"'
-          print*, '   the "groupnumber" ', groupnumber, ' is not active now. This code run stopped.'
-          call finalize()
           stop
        end if
 
-       fortrancsvtikzfilegroupinfor(groupnumber,1) = 1
        do i = 1, fortrancsvtikzfilegroupinfor(groupnumber,6)
-           close(fortrancsvtikzfilegroupinfor(groupnumber,4)+i-1)
+          k = fortrancsvtikzfilegroupinfor(groupnumber,4)+i-1
+          inquire(k,opened=ex)
+          if(ex) close(k)
        end do
+       fortrancsvtikzfilegroupinfor(groupnumber,1) = 0
 
        return
     end subroutine filegroupclose
