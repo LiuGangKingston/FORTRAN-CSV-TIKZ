@@ -141,7 +141,6 @@ contains
        return
     end function integer_to_character
 
-
 end module fortrancsvtikzbasics
 
 
@@ -189,14 +188,16 @@ contains
 
     subroutine fortrancsvtikzgroupfinalize()
         implicit none
+        integer :: i
+        do i = 1, getfortrancsvtikztotalgroups()
+            call filegroupclose(i)
+        end do
         if (allocated(fortrancsvtikzfilegroupinfor))   deallocate(fortrancsvtikzfilegroupinfor)
         if (allocated(fortrancsvtikzfilenameprefixes)) deallocate(fortrancsvtikzfilenameprefixes)
         fortrancsvtikzprefixsize = 0
         fortrancsvtikzprefixused = 0
         fortrancsvtikzgroupsize  = 0
         fortrancsvtikztotalgroups = 0
-        fortrancsvtikzfilegroupinfor = 0
-        fortrancsvtikzfilenameprefixes = ' '
         return
     end subroutine fortrancsvtikzgroupfinalize
 
@@ -470,10 +471,6 @@ end subroutine initialize
 subroutine finalize()
     use fortrancsvtikzallmodules
     implicit none
-    integer :: i
-    do i = 1, getfortrancsvtikztotalgroups()
-        call filegroupclose(i)
-    end do
     call fortrancsvtikzgroupfinalize()
     return
 end subroutine finalize
