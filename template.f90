@@ -276,6 +276,7 @@ contains
 
        if(startingunit .lt. fortrancsvtikzminimumfileunit) then
           print*, 'In the "filegroupsetupandopen(groupnumber,filenameprefix,startingunit,...,linesineachfile)"'
+          print*, '        with the "groupnumber" ', groupnumber
           print*, '        the value of "startingunit" is ', startingunit, ', being less than ', &
                           & fortrancsvtikzminimumfileunit, ' .'
           print*, '        This code does not support such. Then stopped.'
@@ -285,6 +286,7 @@ contains
 
        if(linesineachfile .le. 0) then
           print*, 'In the "filegroupsetupandopen(groupnumber,filenameprefix,startingunit,...,linesineachfile)"'
+          print*, '        with the "groupnumber" ', groupnumber
           print*, '        the value of "linesineachfile" is ', linesineachfile, ', not positive.'
           print*, '        Not reasonable. Then stopped.'
           call finalize()
@@ -295,6 +297,7 @@ contains
 
        if(startingunit + totalfiles .gt. fortrancsvtikzmaximumfileunit) then
           print*, 'In the "filegroupsetupandopen(groupnumber,filenameprefix,startingunit,...,linesineachfile)"'
+          print*, '        with the "groupnumber" ', groupnumber
           print*, '        the value of "startingunit + totalfiles" is ', startingunit + totalfiles, &
                  &',       greater than ', fortrancsvtikzmaximumfileunit
           print*, '        which means too many files resulting in too big unit number.'
@@ -352,6 +355,7 @@ contains
           inquire(j,opened=ex)
           if(ex) then
              print*, 'In the "filegroupsetupandopen(groupnumber,filenameprefix,startingunit,...,linesineachfile)"'
+             print*, '        with the "groupnumber" ', groupnumber
              print*, '        the unit number ', j, ' is being used now, which can not be used to open file:'
              print*, '        '//at(1:l)//trim(integer_to_character(i,n))//fortrancsvtikzfileextension
              print*, '        Then stopped.'
