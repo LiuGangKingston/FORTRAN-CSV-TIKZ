@@ -33,7 +33,7 @@ module fortrancsvtikzbasics
     real*8,  parameter :: bohrmagneton                  = 9.2740100783D-24     !"J/T"
     real*8,  parameter :: bohrradius                    = 5.29177210903D-11    !m
     real*8,  parameter :: boltzmannconstant             = 1.380649D-23         !"J/K"
-    real*8,  parameter :: classicalelectronradius	    = 2.8179403262D-15     !m
+    real*8,  parameter :: classicalelectronradius       = 2.8179403262D-15     !m
     real*8,  parameter :: coulombconstant               = 8.9875517923D9       !"N$\cdot $m$^2$/C$^2$"
     real*8,  parameter :: elementarycharge              = 1.602176634D-19      !"C"
     real*8,  parameter :: faradayconstant               = 9.648533212D4        !C/mol
@@ -42,7 +42,7 @@ module fortrancsvtikzbasics
     real*8,  parameter :: massofelectron                = 9.1093837015D-31     !"kg"
     real*8,  parameter :: massofneutron                 = 1.67492749804D-27    !"kg"
     real*8,  parameter :: massofproton                  = 1.67262192369D-27    !"kg"
-    real*8,  parameter :: nuclearmagneton	            =  5.0507837461D-27    !"J/T"
+    real*8,  parameter :: nuclearmagneton               =  5.0507837461D-27    !"J/T"
     real*8,  parameter :: planckconstant                = 6.62607015D-34       !"J$\cdot $s"
     real*8,  parameter :: rydbergconstant               = 1.0973731568160D7    !1/m
     real*8,  parameter :: secondradiationconstant       = 1.438776877D-2       !m$\dot K$
@@ -52,7 +52,7 @@ module fortrancsvtikzbasics
     real*8,  parameter :: universalgravitationalconst   = 6.67430D-11          !"N$\cdot $m$^2$/kg$^2$"
     real*8,  parameter :: vacuumelectricpermittivity    = 8.8541878128D-12     !"F/m"
     real*8,  parameter :: vacuummagneticpermeability    = 1.25663706212D-6     !"N/$A^2$"
-
+    
     integer, parameter :: numberoftikzcolors = 19
     integer, parameter :: lengthoftikzcolors = 16
     character (len=lengthoftikzcolors), parameter :: tikzcolors(numberoftikzcolors) =  (/&
