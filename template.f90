@@ -225,7 +225,8 @@ contains
        if((groupnumber .le. 0) .or. (groupnumber .gt. (fortrancsvtikztotalgroups+1))) then
           print*, 'In the "filegroupsetupandopen(groupnumber,filenameprefix,startingunit,...,linesineachfile)"'
           print*, '        the value of "groupnumber" can only be a positive integer: 1, 2, 3, ... in sequence.'
-          print*, '        Here it can only be the next one, which is ', fortrancsvtikztotalgroups+1
+          print*, '        Here it can only be the (next) one, which is ', fortrancsvtikztotalgroups+1
+          if(fortrancsvtikztotalgroups .gt. 0) &
           print*, '        or one used earlier, which means less than ', fortrancsvtikztotalgroups+1
           print*, '        Since you are using ', groupnumber, ' , this code run stopped.'
           call finalize()
