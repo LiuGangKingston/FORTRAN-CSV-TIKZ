@@ -1,6 +1,6 @@
 !   This is the template source file for
 !       https://github.com/LiuGangKingston/FORTRAN-CSV-TIKZ.git
-!            Version 2.1
+!            Version 2.2
 !   free for non-commercial use.
 !   Please send us emails for any problems/suggestions/comments.
 !   Please be advised that none of us accept any responsibility
@@ -186,9 +186,9 @@ contains
 
     subroutine fortrancsvtikzgroupinitialize()
         implicit none
-        fortrancsvtikzprefixsize = 2
+        fortrancsvtikzprefixsize = 200
         fortrancsvtikzprefixused = 0
-        fortrancsvtikzgroupsize  = 2
+        fortrancsvtikzgroupsize  = 20
         fortrancsvtikztotalgroups = 0
         allocate(fortrancsvtikzfilenameprefixes(fortrancsvtikzprefixsize))
         allocate(fortrancsvtikzfilegroupinfor(fortrancsvtikzgroupsize,fortrancsvtikzgroupinforwidth))
@@ -315,9 +315,9 @@ contains
           allocate(pretemp(fortrancsvtikzprefixsize))
           pretemp =  fortrancsvtikzfilenameprefixes
           deallocate(fortrancsvtikzfilenameprefixes)
-          allocate(  fortrancsvtikzfilenameprefixes(fortrancsvtikzprefixsize+l+1))
+          allocate(  fortrancsvtikzfilenameprefixes(fortrancsvtikzprefixsize+l+100))
           fortrancsvtikzfilenameprefixes(1:fortrancsvtikzprefixsize) = pretemp(1:fortrancsvtikzprefixsize)
-          fortrancsvtikzprefixsize = fortrancsvtikzprefixsize+l+1
+          fortrancsvtikzprefixsize = fortrancsvtikzprefixsize+l+100
           deallocate(pretemp)
        end if
 
@@ -327,10 +327,10 @@ contains
           allocate(infortemp(fortrancsvtikzgroupsize,fortrancsvtikzgroupinforwidth))
           infortemp = fortrancsvtikzfilegroupinfor
           deallocate( fortrancsvtikzfilegroupinfor)
-          allocate(   fortrancsvtikzfilegroupinfor(fortrancsvtikzgroupsize+1,fortrancsvtikzgroupinforwidth))
+          allocate(   fortrancsvtikzfilegroupinfor(fortrancsvtikzgroupsize+100,fortrancsvtikzgroupinforwidth))
                       fortrancsvtikzfilegroupinfor(1:fortrancsvtikzgroupsize,1:fortrancsvtikzgroupinforwidth) = &
                                         &infortemp(1:fortrancsvtikzgroupsize,1:fortrancsvtikzgroupinforwidth)
-          fortrancsvtikzgroupsize = fortrancsvtikzgroupsize+1
+          fortrancsvtikzgroupsize = fortrancsvtikzgroupsize+100
           deallocate(infortemp)
        end if
 
@@ -441,6 +441,8 @@ contains
        if((groupnumber .le. 0) .or. (groupnumber .gt. fortrancsvtikztotalgroups)) then
           print*, 'In the "filegroupclose(groupnumber)"'
           print*, '   the value of "groupnumber": ', groupnumber, ' is not available. This code run stopped.'
+          if (allocated(fortrancsvtikzfilegroupinfor))   deallocate(fortrancsvtikzfilegroupinfor)
+          if (allocated(fortrancsvtikzfilenameprefixes)) deallocate(fortrancsvtikzfilenameprefixes)
           stop
        end if
 
@@ -449,7 +451,7 @@ contains
           inquire(k,opened=ex)
           if(ex) close(k)
        end do
-       fortrancsvtikzfilegroupinfor(groupnumber,1) = 0
+       fortrancsvtikzfilegroupinfor(groupnumber,1:fortrancsvtikzgroupinforwidth) = 0
 
        return
     end subroutine filegroupclose
