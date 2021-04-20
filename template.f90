@@ -21,37 +21,37 @@
 !
 module fortrancsvtikzbasics
     implicit none
-    real*8,  parameter :: pi = 3.14159265358979323846d0
-    real*8,  parameter :: rad2deg = 180/pi
-    real*8,  parameter :: deg2rad = pi/180
-    real*8,  parameter :: napierconstant = 2.71828182845904523536d0
-    real*8,  parameter :: eulernumber = napierconstant
+    double precision,  parameter :: pi = 3.14159265358979323846d0
+    double precision,  parameter :: rad2deg = 180/pi
+    double precision,  parameter :: deg2rad = pi/180
+    double precision,  parameter :: napierconstant = 2.71828182845904523536d0
+    double precision,  parameter :: eulernumber = napierconstant
 
-    real*8,  parameter :: accelerationduetoearthgravity = 9.80D0               !"m/s$^2$"
-    real*8,  parameter :: atomicmassconstant            = 1.66053906660D-27    !kg
-    real*8,  parameter :: avogadronumber                = 6.02214076D23        !"mol$^{-1}$"
-    real*8,  parameter :: bohrmagneton                  = 9.2740100783D-24     !"J/T"
-    real*8,  parameter :: bohrradius                    = 5.29177210903D-11    !m
-    real*8,  parameter :: boltzmannconstant             = 1.380649D-23         !"J/K"
-    real*8,  parameter :: classicalelectronradius       = 2.8179403262D-15     !m
-    real*8,  parameter :: coulombconstant               = 8.9875517923D9       !"N$\cdot $m$^2$/C$^2$"
-    real*8,  parameter :: elementarycharge              = 1.602176634D-19      !"C"
-    real*8,  parameter :: faradayconstant               = 9.648533212D4        !C/mol
-    real*8,  parameter :: finestructureconstant         = 7.2973525693D-3      !
-    real*8,  parameter :: firstradiationconstant        = 3.741771852D-16      !W$\dot m^2$
-    real*8,  parameter :: massofelectron                = 9.1093837015D-31     !"kg"
-    real*8,  parameter :: massofneutron                 = 1.67492749804D-27    !"kg"
-    real*8,  parameter :: massofproton                  = 1.67262192369D-27    !"kg"
-    real*8,  parameter :: nuclearmagneton               =  5.0507837461D-27    !"J/T"
-    real*8,  parameter :: planckconstant                = 6.62607015D-34       !"J$\cdot $s"
-    real*8,  parameter :: rydbergconstant               = 1.0973731568160D7    !1/m
-    real*8,  parameter :: secondradiationconstant       = 1.438776877D-2       !m$\dot K$
-    real*8,  parameter :: speedoflightinvacuum          = 2.99792458D+8        !"m/s"
-    real*8,  parameter :: thomsoncrosssection           = 6.6524587321D-29     ! $m^2$
-    real*8,  parameter :: universalgasconstant          = 8.314462618D0        !"J/(mol$\cdot $K)"
-    real*8,  parameter :: universalgravitationalconst   = 6.67430D-11          !"N$\cdot $m$^2$/kg$^2$"
-    real*8,  parameter :: vacuumelectricpermittivity    = 8.8541878128D-12     !"F/m"
-    real*8,  parameter :: vacuummagneticpermeability    = 1.25663706212D-6     !"N/$A^2$"
+    double precision,  parameter :: accelerationduetoearthgravity = 9.80D0               !"m/s$^2$"
+    double precision,  parameter :: atomicmassconstant            = 1.66053906660D-27    !kg
+    double precision,  parameter :: avogadronumber                = 6.02214076D23        !"mol$^{-1}$"
+    double precision,  parameter :: bohrmagneton                  = 9.2740100783D-24     !"J/T"
+    double precision,  parameter :: bohrradius                    = 5.29177210903D-11    !m
+    double precision,  parameter :: boltzmannconstant             = 1.380649D-23         !"J/K"
+    double precision,  parameter :: classicalelectronradius       = 2.8179403262D-15     !m
+    double precision,  parameter :: coulombconstant               = 8.9875517923D9       !"N$\cdot $m$^2$/C$^2$"
+    double precision,  parameter :: elementarycharge              = 1.602176634D-19      !"C"
+    double precision,  parameter :: faradayconstant               = 9.648533212D4        !C/mol
+    double precision,  parameter :: finestructureconstant         = 7.2973525693D-3      !
+    double precision,  parameter :: firstradiationconstant        = 3.741771852D-16      !W$\dot m^2$
+    double precision,  parameter :: massofelectron                = 9.1093837015D-31     !"kg"
+    double precision,  parameter :: massofneutron                 = 1.67492749804D-27    !"kg"
+    double precision,  parameter :: massofproton                  = 1.67262192369D-27    !"kg"
+    double precision,  parameter :: nuclearmagneton               =  5.0507837461D-27    !"J/T"
+    double precision,  parameter :: planckconstant                = 6.62607015D-34       !"J$\cdot $s"
+    double precision,  parameter :: rydbergconstant               = 1.0973731568160D7    !1/m
+    double precision,  parameter :: secondradiationconstant       = 1.438776877D-2       !m$\dot K$
+    double precision,  parameter :: speedoflightinvacuum          = 2.99792458D+8        !"m/s"
+    double precision,  parameter :: thomsoncrosssection           = 6.6524587321D-29     ! $m^2$
+    double precision,  parameter :: universalgasconstant          = 8.314462618D0        !"J/(mol$\cdot $K)"
+    double precision,  parameter :: universalgravitationalconst   = 6.67430D-11          !"N$\cdot $m$^2$/kg$^2$"
+    double precision,  parameter :: vacuumelectricpermittivity    = 8.8541878128D-12     !"F/m"
+    double precision,  parameter :: vacuummagneticpermeability    = 1.25663706212D-6     !"N/$A^2$"
 
     integer, parameter :: numberoftikzcolors = 19
     integer, parameter :: lengthoftikzcolors = 16
@@ -546,7 +546,7 @@ subroutine mycomputing()
 
     !integer :: i, j, k, u, groupnumber, startingunitforsplitfiles, datalinesineachfile, startingline, totallines
     !double precision :: manydoubleprecisionvariables
-    
+
     !groupnumber = 1
     !totallines = 500
     !startingline = 1
