@@ -567,7 +567,8 @@ subroutine mycomputing()
     write(21,"(1x,i10,',',7(f20.8, ','),e20.8)") totallines,refractiveindex,bigradius,a,b,z,anglez,c,anglea
     close(21)
 
-    call filegroupsetupandopen(groupnumber,'iterated.alldata.',startingunitforsplitfiles,startingline,totallines,datalinesineachfile)
+    call filegroupsetupandopen(groupnumber,'iterated.alldata.',startingunitforsplitfiles,startingline, &
+                                                                        & totallines,datalinesineachfile)
     call firstlinetoafilegroup(groupnumber,'totallines,i,refractiveindex,bigradius,'//&
                                           &'a,b,z,anglez,c,anglea,incidentangle,refractiveangle,anglede,'//&
                                           &'dx,ee,et,ex,ey,anglece,angleced,outangle,mycolor')
