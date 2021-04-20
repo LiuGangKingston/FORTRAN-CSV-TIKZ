@@ -394,7 +394,9 @@ contains
              call finalize()
              stop
           else
-              open(j, file = at(1:l)//trim(integer_to_character(i,n))//fortrancsvtikzfileextension)
+             open(j, file = at(1:l)//trim(integer_to_character(i,n))//fortrancsvtikzfileextension)
+             print*, 'File "'//at(1:l)//trim(integer_to_character(i,n))//fortrancsvtikzfileextension&
+                            &//'" is opened with unit number: ', j
           end if
        end do
 
