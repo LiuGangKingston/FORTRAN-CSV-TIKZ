@@ -558,8 +558,7 @@ subroutine mycomputing()
     !...
     !open(21, file='setup.scalars.csv')
     !write(21,"(a)")'correspondingvariablenamesseparatedbycommaswithoutanyotherletters'
-    !write(21,"(1x,i10,',',7(f20.8, ','),e20.8)") thevariables
-    !close(21)
+    !write(21,*) firstvariable, ',', secondvariable, ',', thirdvariable, ',', ..., ',' , thelastvariable
 
     !...
     !call filegroupsetupandopen(groupnumber,'iterated.alldata.',startingunitforsplitfiles,startingline,totallines, &
@@ -568,7 +567,7 @@ subroutine mycomputing()
     !do i = startingline, totallines
         !...
         !u = pickunitinafilegroup(groupnumber, i)
-        !write(u,"(1x,2(i10,','),19(f20.8, ','),a)") thevariables, picktikzcolor(i)
+        !write(u,*) firstvariable, ',', secondvariable, ',', thirdvariable, ',', ..., ',' , picktikzcolor(i)
     !end do
     !call filegroupclose(groupnumber)
 
