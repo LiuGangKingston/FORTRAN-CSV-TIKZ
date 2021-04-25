@@ -566,7 +566,7 @@ subroutine mycomputing()
 
     open(21, file='setup.scalars.csv')
     write(21,"(a)")'totallines,refractiveindex,bigradius,a,b,z,anglez,c,anglea'
-    write(21,"(1x,i10,',',7(f20.8, ','),e20.8)") totallines,refractiveindex,bigradius,a,b,z,anglez,c,anglea
+    write(21,*) totallines, ',', refractiveindex, ',', bigradius, ',', a, ',', b, ',', z, ',', anglez, ',', c, ',', anglea
     close(21)
 
     call filegroupsetupandopen(groupnumber,'iterated.alldata.',startingunitforsplitfiles,startingline, &
@@ -598,9 +598,9 @@ subroutine mycomputing()
        outangle=asin(sin(angleced*deg2rad) * refractiveindex)*rad2deg
 
        u = pickunitinafilegroup(groupnumber, i)
-       write(u,"(1x,2(i10,','),19(f20.8, ','),a)") &
-               &totallines,i,refractiveindex,bigradius,a,b,z,anglez,c,anglea,incidentangle, &
-               &refractiveangle,anglede,dx,ee,et,ex,ey,anglece,angleced,outangle,picktikzcolor(i)
+       write(u,*) totallines, ',', i, ',', refractiveindex, ',', bigradius, ',', a, ',', b, ',', z, ',', anglez, ',', &
+                  &c, ',', anglea, ',', incidentangle,  ',', refractiveangle, ',', anglede, ',', dx, ',', ee, ',', &
+                  &et, ',', ex, ',', ey, ',', anglece, ',', angleced, ',', outangle, ',', picktikzcolor(i)
 
     end do
 

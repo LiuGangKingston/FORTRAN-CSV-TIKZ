@@ -562,7 +562,7 @@ subroutine mycomputing()
     totallines = 10
 
     write(31,"(a)")'totallines,refractiveindex,bigradius,a,b,z,anglez,c,anglea'
-    write(31,"(1x,i10,',',7(f20.8, ','),e20.8)") totallines,refractiveindex,bigradius,a,b,z,anglez,c,anglea
+    write(31,*) totallines, ',', refractiveindex, ',', bigradius, ',', a, ',', b, ',', z, ',', anglez, ',', c, ',', anglea
 
     write(32,"(a)")'totallines,i,refractiveindex,bigradius,a,b,z,anglez,c,anglea,incidentangle,'//&
                   &'refractiveangle,anglede,dx,ee,et,ex,ey,anglece,angleced,outangle,mycolor'
@@ -589,9 +589,9 @@ subroutine mycomputing()
        angleced=anglece-anglede
        outangle=asin(sin(angleced*deg2rad) * refractiveindex)*rad2deg
 
-       write(32,"(1x,2(i10,','),19(f20.8, ','),a)") &
-               &totallines,i,refractiveindex,bigradius,a,b,z,anglez,c,anglea,incidentangle, &
-               &refractiveangle,anglede,dx,ee,et,ex,ey,anglece,angleced,outangle,picktypicalcolor(i)
+       write(32,*) totallines, ',', i, ',', refractiveindex, ',', bigradius, ',', a, ',', b, ',', z, ',', anglez, ',', &
+                  &c, ',', anglea, ',', incidentangle,  ',', refractiveangle, ',', anglede, ',', dx, ',', ee, ',', &
+                  &et, ',', ex, ',', ey, ',', anglece, ',', angleced, ',', outangle, ',', picktypicalcolor(i)
 
     end do
 
