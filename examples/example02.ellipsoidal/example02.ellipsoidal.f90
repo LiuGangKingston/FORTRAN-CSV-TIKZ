@@ -566,7 +566,7 @@ subroutine mycomputing()
 
     open(21, file='setup.scalars.csv')
     write(21,"(a)")'a,b,c,startingangleofsoidal,endinggangleofsoidal,startinxofsoidal,startinyofsoidal'
-    write(21,"(1x,6(f20.8, ','),e20.8)") a,b,c,startingangleofsoidal,endinggangleofsoidal,startinxofsoidal,startinyofsoidal
+    write(21,*) a,',',b,',',c,',',startingangleofsoidal,',',endinggangleofsoidal,',',startinxofsoidal,',',startinyofsoidal
     close(21)
 
 
@@ -602,8 +602,8 @@ subroutine mycomputing()
        incidentangle = normalangle - startingangle
        reflectangle = tangentangle + 90.0d0 + incidentangle
        u = pickunitinafilegroup(groupnumber, i)
-       write(u,"(1x,13(f20.8, ','),a)") c,d,startingangle,dk,bigf,t,x,y,yprime,tangentangle,normalangle,incidentangle,&
-                                       & reflectangle,picktypicalcolor(i)
+       write(u,*) c,',',d,',',startingangle,',',dk,',',bigf,',',t,',',x,',',y,',',yprime,',',tangentangle,&
+                                & ',',normalangle,',',incidentangle,',',reflectangle,',',picktypicalcolor(i)
 
     end do
     end do
