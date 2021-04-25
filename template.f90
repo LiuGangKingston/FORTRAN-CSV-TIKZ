@@ -559,7 +559,7 @@ subroutine mycomputing()
     !open(21, file='setup.scalars.csv')
     !write(21,"(a)")'correspondingvariablenamesseparatedbycommaswithoutanyotherletters'
     !write(21,*) firstvariable, ',', secondvariable, ',', thirdvariable, ',', ..., ',' , thelastvariable
-
+    !close(21)
     !...
     !call filegroupsetupandopen(groupnumber,'iterated.alldata.',startingunitforsplitfiles,startingline,totallines, &
     !                          &datalinesineachfile)
