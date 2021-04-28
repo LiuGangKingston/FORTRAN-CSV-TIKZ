@@ -237,7 +237,7 @@ contains
        character(len=1), allocatable :: pretemp(:)
        character (len=len(filenameprefix)):: at
        integer :: i,j,k,l,n,totalfiles,inforextent,preextent
-       logical :: ex, samestring
+       logical :: unitused, fileopened, samestring
 
        if((groupnumber .le. 0) .or. (groupnumber .gt. (fortrancsvtikztotalgroups+1))) then
           print*, 'In the "filegroupsetupandopen(groupnumber,filenameprefix,startingunit,...,linesineachfile)"'
@@ -385,19 +385,20 @@ contains
 
        do i = 1, totalfiles
           j = startingunit + i - 1
-          inquire(j,opened=ex)
-          if(ex) then
+          inquire(j,opened=unitused)
+          inquire(file=at(1:l)//trim(integer_to_character(i,n))//fortrancsvtikzfileextension,opened=fileopened)
+          if(unitused .or. fileopened) then
              print*, 'In the "filegroupsetupandopen(groupnumber,filenameprefix,startingunit,...,linesineachfile)"'
              print*, '        with the "groupnumber" ', groupnumber
-             print*, '        the unit number ', j, ' is being used now, which can not be used to open file:'
-             print*, '        '//at(1:l)//trim(integer_to_character(i,n))//fortrancsvtikzfileextension
+             print*, '        the file '//at(1:l)//trim(integer_to_character(i,n))//fortrancsvtikzfileextension
+             print*, '        or the unit number ', j, ' is being used now, which can not be used again.'
              print*, '        Then stopped.'
              call finalize()
              stop
           else
              open(j, file = at(1:l)//trim(integer_to_character(i,n))//fortrancsvtikzfileextension)
              print*, 'File "'//at(1:l)//trim(integer_to_character(i,n))//fortrancsvtikzfileextension&
-                            &//'" is opened with unit number: ', j
+                            &//'" is opened with unit number: ', j, ' in the "groupnumber" ', groupnumber
           end if
        end do
 
