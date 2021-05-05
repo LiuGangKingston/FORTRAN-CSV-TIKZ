@@ -23,7 +23,7 @@ In Latex/TikZ, we will use the "CSVSIMPLE" package. Since it supports the option
       ... DRAW ANYTHING HERE ...
      }
 
-in a tex file can read it, and automatically get macros in form of "\COLUMNNAME" for all comlumn data. Another caution is to avoid "," at the end of any line of the data file. In fact, the above command also invokes an iteration: to apply data line by line to perform the corresponding work of "{... DRAW ANYTHING HERE ...}". 
+in a tex file can read it, and automatically get macros in form of "\COLUMNNAME" for all comlumn data. Another caution is to avoid "," at the end of any line of the CSV file. In fact, the above command also invokes an iteration: to apply data line by line to perform the corresponding work of "{... DRAW ANYTHING HERE ...}". 
 
 As in our example01, two CSV files are generated: 
 
