@@ -18,7 +18,7 @@ By using the template file, users only need to code the part source code for the
 
 In Latex/TikZ, we will use the "CSVSIMPLE" package. Since it supports the option "[head to column names]" in the command "\csvreader", the CSV files are better generated with all names for the data columns as the first line. As "CSVSIMPLE" documented, any pair of neighbor names must be separated by the comma symbol ",", no other character (even a space) is permitted in the first line. Once it is generated properly, the command
 
-     \csvreader[head to column names]{THE CSV FILE}  {}  
+     \csvreader[head to column names] {THE CSV FILE} {}  
      {
       ... DRAW ANYTHING HERE ...
      }
