@@ -23,7 +23,7 @@ In Latex/TikZ, we will use the "CSVSIMPLE" package. Since it supports the option
       ... DRAW ANYTHING HERE ...
      }
 
-in a tex file can read it, and automatically get macros in form of "\COLUMNNAME" for all comlumn data. Another caution is to avoid "," at the end of any line of the CSV file. In fact, the above command also invokes an iteration: to apply data line by line to perform the corresponding work of "{... DRAW ANYTHING HERE ...}". 
+in a tex file can read it, and automatically get macros in form of "\COLUMNNAME" for all comlumn data. Another caution is to avoid "," at the end of any line of the CSV files. In fact, the above command also invokes an iteration: to apply data line by line to perform the corresponding work of "{... DRAW ANYTHING HERE ...}". 
 
 As in our example01, two CSV files are generated: 
 
@@ -36,7 +36,7 @@ The first contains data computed only one-time for figure setup. The second one 
 
 are outputted to the "iterated.alldata.csv" file, including those which were already outputted into previous CSV files. 
 
-In version 2.2, modules are restructed and more routines are added. The new routines make it easy to split a large amount of data then output them into a group of CSV files, and another large amount of data into another group of CSV files, and another another, unlimited. Hope this may be helpful to reduce hardware memory requirement, supposing data can be used part by part during Latex file being processed. As an example, it may be done as:
+In version 2.2, modules are reconstructed with more routines being added. The new routines make it easy to split a large amount of data then output them into a group of CSV files, and another large amount of data into another group of CSV files, and another another, unlimited. Hope this is helpful to reduce hardware memory requirement, supposing data can be used part by part during Latex file being processed. As an example, it may be done as:
 
     integer :: i, u, groupnumber, startingunitforsplitfiles, datalinesineachfile, startingline, totallines
     double precision :: manydoubleprecisionvariables
@@ -48,19 +48,29 @@ In version 2.2, modules are restructed and more routines are added. The new rout
     startingunitforsplitfiles = 30
 
     ...
-    ! To open files "iterated.alldata.1.csv", "iterated.alldata.2.csv", "iterated.alldata.3.csv", ..., 
-    ! till the last needed one, with unit numbers 30, 31, 32, ... respectively:
+    ! The next routine call will open files "iterated.alldata.1.csv", 
+    !                                       "iterated.alldata.2.csv", 
+    !                                       "iterated.alldata.3.csv", 
+    !                                        ..., 
+    !                                        till the last needed one, 
+    ! with unit numbers 30, 31, 32, ... respectively:
     call filegroupsetupandopen(groupnumber, 'iterated.alldata.', startingunitforsplitfiles, startingline,&
                               &totallines, datalinesineachfile)
                               
-    ! The long string will be outputted into all the above files:
+    ! The next routine call will output the long string into all the above files as the top line:
     call firstlinetoafilegroup(groupnumber,'correspondingvariablenamesseparatedbycommaswithoutanyingelse')
+    
     do i = startingline, totallines
         ...
-        u = pickunitinafilegroup(groupnumber, i) ! Get the unit number of the specific file, based on "i" value. 
+        
+        ! The next function will return the unit number of the specific file, based on "i" value. 
+        u = pickunitinafilegroup(groupnumber, i) 
         write(u,"(1x,2(i10,','),19(f20.8, ','),a)") thevariables, picktikzcolor(i)
     end do
-    call filegroupclose(groupnumber)  ! All files in the group will be closed.
+    
+    ! The next routine call will close all files in the group.
+    call filegroupclose(groupnumber)  
+
 
 It is used in example01.500beams.data.split and example02.ellipsoidal. 
 
