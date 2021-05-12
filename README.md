@@ -5,12 +5,13 @@ To use FORTRAN computing and Tikz drawing powers together.
           and
      Shiwei Huang (huang937@gmail.com)
      
-It is absolutely a good idea to combine FORTRAN/C/C++/Python computing and Tikz drawing powers. To do this, we may use FORTRAN/C/C++/Python to perform all key computations, then output all needed results into CSV files. Since Latex/Tikz can read CSV data files, it can use the data to draw figures accordingly. For the four languages, we have separate specific  repositories: 
+It is absolutely a good idea to combine FORTRAN/C/C++/Python computing and Tikz drawing powers. To do this, we may use FORTRAN/C/C++/Python/Java to perform all key computations, then output all needed results into CSV files. Since Latex/Tikz can read CSV data files, it can use the data to draw figures accordingly. For the four languages, we have separate specific  repositories: 
 
      https://github.com/LiuGangKingston/FORTRAN-CSV-TIKZ.git
      https://github.com/LiuGangKingston/C-CSV-TIKZ.git
      https://github.com/LiuGangKingston/CPP-CSV-TIKZ.git
      https://github.com/LiuGangKingston/PYTHON-CSV-TIKZ.git
+     https://github.com/LiuGangKingston/JAVA-CSV-TIKZ.git
 
 While all of them are equivalent to each other, this is the FORTRAN version. 
 
