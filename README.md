@@ -16,7 +16,7 @@ It is absolutely a good idea to combine FORTRAN or C or C++ or Python or Java or
 
 While all of them are equivalent to each other, this is the FORTRAN version. 
 
-By using the template file or any example, users only need to code the part source code for their specific computing work. Our source code not only offers all the rest necessary part to build the complete code, but also provides additional facilities. For example, the function "PickTizkColor(i)" returns a TikZ color for any input integer "i", which can be used to add various colors to iteratively calculated drawings. 
+By using the template file or any example, users only need to code the part source code for their specific computing work. Our source code not only offers all the rest necessary part to build the complete code, but also provides additional facilities. For example, the function "PickTikZColor(i)" returns a TikZ color for any input integer "i", which can be used to add various colors to iteratively calculated drawings. 
 
 In Latex/TikZ, we will use the "CSVSIMPLE" package. Since it supports the option "[head to column names]" in the command "\csvreader", the CSV files are better generated with all names for the data columns as the first line. As "CSVSIMPLE" documented, any pair of neighbor names must be separated by the comma ",", with no other character (even a space) being permitted, in the first line. Once it is generated properly, the command
 
